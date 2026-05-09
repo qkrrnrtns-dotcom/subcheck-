@@ -1,6 +1,1191 @@
 <!DOCTYPE html>
 <html lang="ko">
+<head><!DOCTYPE html>
+<html lang="ko">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>SUBCHECK</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#07070C">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- iOS Safari PWA -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SUBCHECK">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="apple-touch-startup-image" href="icon-512.png">
+
+<meta name="description" content="내 구독 낭비, 지금 바로 확인하세요">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
+<style>
+:root{
+  --bg:#07070C;--card:#0F0F18;--pill:#181824;--hover:#1D1D2B;
+  --b:rgba(255,255,255,0.07);--bm:rgba(255,255,255,0.13);
+  --t:#F2F2FA;--t2:#5C5C7A;--t3:#2A2A3E;
+  --red:#FF3355;--green:#00CC88;--amber:#FFB020;--blue:#4D8EF5;--purple:#8B7FEF;
+  --r:16px;--rsm:10px;--rxs:8px;
+  --nav-h:60px;--safe-b:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{background:var(--bg);-webkit-tap-highlight-color:transparent;}
+body{font-family:'Pretendard',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--t);min-height:100vh;max-width:480px;margin:0 auto;padding-bottom:calc(var(--nav-h) + var(--safe-b) + 24px);-webkit-font-smoothing:antialiased;}
+
+/* NAV */
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(7,7,12,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:0.5px solid var(--b);display:flex;z-index:200;padding-bottom:var(--safe-b);height:calc(var(--nav-h) + var(--safe-b));}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px 0 0;cursor:pointer;user-select:none;position:relative;}
+.nav-icon{font-size:22px;line-height:1;transition:transform .2s cubic-bezier(.34,1.5,.64,1);}
+.nav-item.on .nav-icon{transform:scale(1.1);}
+.nav-lbl{font-size:10px;font-weight:600;color:var(--t3);transition:color .15s;}
+.nav-item.on .nav-lbl{color:var(--blue);}
+.nav-pip{width:4px;height:4px;border-radius:50%;background:var(--blue);position:absolute;bottom:8px;left:50%;transform:translateX(-50%);opacity:0;transition:opacity .2s;}
+.nav-item.on .nav-pip{opacity:1;}
+
+/* HEADER */
+.hdr{padding:calc(16px + env(safe-area-inset-top,0px)) 20px 0;display:flex;align-items:center;justify-content:space-between;background:var(--bg);position:sticky;top:0;z-index:100;}
+.logo{font-size:18px;font-weight:800;letter-spacing:.08em;}
+.logo b{color:var(--red);}
+.hdr-right{display:flex;gap:6px;}
+.hdr-btn,.icon-btn{background:var(--pill);border:none;border-radius:var(--rxs);color:var(--t2);font-family:inherit;font-size:11px;font-weight:500;padding:8px 13px;cursor:pointer;}
+.hdr-btn:active,.icon-btn:active{opacity:.7;}
+
+/* PANELS */
+.panel{display:none;padding:14px 20px 0;}
+.panel.on{display:block;}
+
+/* HERO */
+.hero{background:var(--card);border:0.5px solid var(--b);border-radius:var(--r);padding:20px 20px 18px;margin-bottom:12px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-50px;right:-30px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(255,51,85,.07) 0%,transparent 70%);pointer-events:none;}
+.hero-eyebrow,.hero-lbl{font-size:11px;font-weight:500;color:var(--t2);letter-spacing:.04em;margin-bottom:5px;}
+.hero-amount,.hero-n{font-size:46px;font-weight:800;letter-spacing:-.04em;line-height:1;margin-bottom:18px;font-variant-numeric:tabular-nums;}
+.hero-amount .won,.hero-n .u{font-size:24px;font-weight:500;color:var(--t2);margin-right:2px;vertical-align:middle;}
+.stats,.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.stat,.sp{background:var(--pill);border-radius:var(--rsm);padding:11px 13px;}
+.stat-l,.sp-l{font-size:10px;font-weight:500;color:var(--t3);margin-bottom:4px;}
+.stat-v,.sp-v{font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;}
+.waste-rail,.wt{background:rgba(255,255,255,.05);border-radius:2px;height:2px;overflow:hidden;}
+.waste-fill,.wf{height:100%;border-radius:2px;background:var(--red);transition:width .8s cubic-bezier(.4,0,.2,1);}
+
+/* ACTIONS */
+.action-row{display:flex;gap:8px;margin-bottom:14px;}
+.action-btn{flex:1;padding:13px 0;border-radius:var(--rsm);border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;}
+.action-btn:active{transform:scale(.97);}
+.action-btn.primary,.sms-btn{background:rgba(77,142,245,.1);color:var(--blue);border:0.5px solid rgba(77,142,245,.25);}
+.action-btn.secondary{background:var(--pill);color:var(--t2);border:0.5px solid var(--b);}
+.sms-btn{width:100%;padding:13px;margin-bottom:10px;border-radius:var(--rsm);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;}
+
+/* BANNER */
+.banner,.udbanner{background:rgba(77,142,245,.07);border:0.5px solid rgba(77,142,245,.2);border-radius:var(--rsm);padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;}
+.banner:active,.udbanner:active{background:rgba(77,142,245,.12);}
+.banner-text,.udb-text{font-size:12px;color:var(--blue);font-weight:500;line-height:1.5;}
+.banner-cta,.udb-btn{background:var(--blue);color:#fff;border:none;border-radius:6px;font-family:inherit;font-size:11px;font-weight:700;padding:6px 12px;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+
+/* SECTION */
+.section-hdr{display:flex;align-items:center;justify-content:space-between;margin:16px 0 10px;}
+.section-title,.sl{font-size:12px;font-weight:600;color:var(--t2);letter-spacing:.04em;}
+
+/* CHIPS */
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.chip{display:flex;align-items:center;gap:5px;background:var(--card);border:0.5px solid var(--b);border-radius:100px;padding:5px 10px 5px 5px;font-size:11px;font-weight:500;color:var(--t2);cursor:pointer;user-select:none;}
+.chip:active{transform:scale(.95);}
+.chip.on{border-color:var(--green);color:var(--green);background:rgba(0,204,136,.06);}
+.ci,.chip-ico{width:18px;height:18px;border-radius:5px;overflow:hidden;background:var(--pill);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:var(--t2);flex-shrink:0;}
+.ci img,.chip-ico img{width:100%;height:100%;object-fit:contain;}
+
+/* ADD FORM */
+.af,.add-form{background:var(--card);border:0.5px solid var(--b);border-radius:var(--r);padding:14px 16px;margin-bottom:16px;}
+.af-g1,.form-row{display:grid;grid-template-columns:1fr 90px;gap:8px;margin-bottom:8px;}
+.af-g2,.form-row2{display:grid;grid-template-columns:1fr 70px auto;gap:8px;}
+input,select{background:var(--pill);border:0.5px solid var(--b);border-radius:var(--rxs);color:var(--t);font-family:inherit;font-size:13px;padding:10px 12px;outline:none;width:100%;transition:border-color .15s;-webkit-appearance:none;appearance:none;}
+input::placeholder{color:var(--t3);}
+input:focus,select:focus{border-color:var(--bm);}
+.add-btn,.form-submit{background:var(--t);color:var(--bg);border:none;border-radius:var(--rxs);font-family:inherit;font-size:13px;font-weight:700;padding:10px 16px;cursor:pointer;white-space:nowrap;}
+.add-btn:active,.form-submit:active{opacity:.8;}
+
+/* SUB CARDS */
+.sub-list{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+.sc{background:var(--card);border:0.5px solid var(--b);border-radius:var(--r);padding:13px 14px;display:flex;align-items:center;gap:12px;animation:slideUp .22s ease;}
+.sc:active{background:var(--hover);}
+.sc.waste{border-color:rgba(255,51,85,.2);background:rgba(255,51,85,.02);}
+@keyframes slideUp{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:none;}}
+.sl-logo,.sc-logo{width:40px;height:40px;border-radius:10px;background:var(--pill);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--t2);flex-shrink:0;}
+.sl-logo img,.sc-logo img{width:100%;height:100%;object-fit:contain;padding:4px;}
+.sc-info{flex:1;min-width:0;}
+.sn,.sc-name{font-size:14px;font-weight:600;color:var(--t);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.smeta,.sc-meta{font-size:11px;color:var(--t2);}
+.sr,.sc-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
+.ubadge,.status-badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;cursor:pointer;border:none;font-family:inherit;white-space:nowrap;}
+.ubadge:active,.status-badge:active{opacity:.6;}
+.dbtn,.del-btn{background:none;border:none;color:var(--t3);cursor:pointer;font-size:16px;line-height:1;padding:2px;}
+.dbtn:active,.del-btn:active{color:var(--red);}
+.empty,.empty-state{text-align:center;padding:48px 0 20px;color:var(--t2);font-size:13px;line-height:1.8;}
+
+/* TIMELINE */
+.tl-header,.tl-summary{background:var(--card);border:0.5px solid var(--b);border-radius:var(--r);padding:20px;margin-bottom:14px;}
+.tl-total-lbl,.tl-eyebrow{font-size:11px;font-weight:500;color:var(--t2);margin-bottom:5px;}
+.tl-total,.tl-amount{font-size:32px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.03em;}
+.tl-sub,.tl-desc{font-size:12px;color:var(--t2);margin-top:4px;}
+.tl-list{margin-bottom:14px;}
+.tl-row,.tl-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:0.5px solid var(--b);}
+.tl-row:last-child,.tl-item:last-child{border-bottom:none;}
+.tl-date-col,.tl-date{width:42px;flex-shrink:0;text-align:center;}
+.tl-day{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1;}
+.tl-dow{font-size:10px;color:var(--t2);margin-top:2px;}
+.tl-badge,.tl-pill{font-size:9px;font-weight:700;padding:2px 6px;border-radius:20px;margin-top:3px;display:inline-block;}
+.tl-logo{width:32px;height:32px;border-radius:8px;background:var(--pill);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--t2);flex-shrink:0;}
+.tl-logo img{width:100%;height:100%;object-fit:contain;padding:3px;}
+.tl-name{font-size:13px;font-weight:500;color:var(--t);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tl-waste-tag,.tl-warn{font-size:10px;color:var(--red);font-weight:600;margin-top:1px;}
+.tl-price{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;}
+.tl-no-billing{text-align:center;padding:30px 0;color:var(--t2);font-size:12px;line-height:1.8;}
+.edit-billing-btn{font-size:11px;color:var(--blue);background:none;border:none;font-family:inherit;cursor:pointer;text-decoration:underline;padding:0;margin-top:4px;}
+
+/* SAVINGS */
+.save-hero{background:var(--card);border:0.5px solid rgba(255,51,85,.18);border-radius:var(--r);padding:20px;margin-bottom:14px;}
+.save-lbl,.savings-eyebrow{font-size:11px;font-weight:500;color:rgba(255,80,100,.7);margin-bottom:4px;}
+.save-n,.savings-amount{font-size:36px;font-weight:800;color:var(--red);letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin-bottom:4px;}
+.save-desc,.savings-desc{font-size:12px;color:var(--t2);}
+.cancel-card{background:var(--card);border:0.5px solid rgba(255,51,85,.16);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;}
+.cc-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.cc-logo{width:38px;height:38px;border-radius:10px;background:var(--pill);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--t2);flex-shrink:0;}
+.cc-logo img{width:100%;height:100%;object-fit:contain;padding:3px;}
+.cc-name{font-size:14px;font-weight:600;color:var(--t);}
+.cc-price,.cc-sub{font-size:11px;color:var(--t2);margin-top:1px;}
+.cc-savings,.cc-nums{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.cc-save-item,.cc-num{background:var(--pill);border-radius:var(--rxs);padding:9px 12px;}
+.cc-save-lbl,.cc-num-l{font-size:10px;color:var(--t3);margin-bottom:3px;}
+.cc-save-val,.cc-num-v{font-size:15px;font-weight:700;color:var(--green);font-variant-numeric:tabular-nums;}
+.cc-actions{display:flex;gap:6px;}
+.cancel-btn,.cc-cancel{flex:1;padding:11px 0;background:rgba(255,51,85,.08);border:0.5px solid rgba(255,51,85,.22);border-radius:var(--rxs);font-family:inherit;font-size:12px;font-weight:700;color:var(--red);cursor:pointer;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:5px;}
+.cancel-btn:active,.cc-cancel:active{background:rgba(255,51,85,.14);}
+.keep-btn,.cc-keep{padding:11px 12px;background:var(--pill);border:0.5px solid var(--b);border-radius:var(--rxs);font-family:inherit;font-size:11px;color:var(--t2);cursor:pointer;}
+.cc-done{padding:11px 12px;background:rgba(0,204,136,.07);border:0.5px solid rgba(0,204,136,.2);border-radius:var(--rxs);font-family:inherit;font-size:11px;font-weight:700;color:var(--green);cursor:pointer;white-space:nowrap;}
+.save-empty{text-align:center;padding:44px 0;color:var(--t2);}
+.share-all-btn,.share-btn{width:100%;padding:14px;background:var(--pill);border:0.5px solid var(--b);border-radius:var(--r);font-family:inherit;font-size:13px;font-weight:600;color:var(--t2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:4px;}
+.card-share-btn{width:100%;padding:14px;margin-bottom:8px;background:rgba(255,51,85,.07);border:0.5px solid rgba(255,51,85,.18);border-radius:var(--r);font-family:inherit;font-size:13px;font-weight:700;color:var(--t);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
+
+/* HISTORY */
+.hist-total{background:rgba(0,204,136,.07);border:0.5px solid rgba(0,204,136,.15);border-radius:var(--rsm);padding:13px 16px;margin-bottom:10px;}
+.hist-total-lbl{font-size:10px;font-weight:600;color:rgba(0,204,136,.6);letter-spacing:.07em;text-transform:uppercase;margin-bottom:3px;}
+.hist-total-n{font-size:24px;font-weight:800;color:var(--green);font-variant-numeric:tabular-nums;}
+.hist-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:0.5px solid var(--b);}
+.hist-item:last-child{border-bottom:none;}
+.hist-logo{width:30px;height:30px;border-radius:8px;background:var(--pill);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:var(--t2);flex-shrink:0;}
+.hist-logo img{width:100%;height:100%;object-fit:contain;padding:3px;}
+.hist-name{font-size:12px;font-weight:500;color:var(--t2);flex:1;}
+.hist-date{font-size:10px;color:var(--t3);}
+.hist-save{font-size:12px;font-weight:700;color:var(--green);font-variant-numeric:tabular-nums;}
+.hist-months{font-size:10px;color:rgba(0,204,136,.6);}
+
+/* NOTIFICATION */
+.notif-banner{background:rgba(77,142,245,.07);border:0.5px solid rgba(77,142,245,.18);border-radius:var(--rsm);padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.notif-text{font-size:12px;color:var(--blue);line-height:1.5;}
+.notif-btn{background:var(--blue);color:#fff;border:none;border-radius:6px;font-family:inherit;font-size:11px;font-weight:700;padding:6px 12px;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.notif-granted{font-size:11px;color:var(--green);display:flex;align-items:center;gap:4px;}
+
+/* MODALS */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.82);display:flex;align-items:flex-end;justify-content:center;z-index:999;animation:fadeOv .2s ease;}
+@keyframes fadeOv{from{opacity:0;}to{opacity:1;}}
+.sheet{background:#0C0C15;border:0.5px solid rgba(255,255,255,.09);border-radius:22px 22px 0 0;padding:28px 22px calc(28px + var(--safe-b));width:100%;max-width:480px;animation:slideSheet .28s cubic-bezier(.34,1.15,.64,1);max-height:88vh;overflow-y:auto;}
+@keyframes slideSheet{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.sh-title,.sheet-title{font-size:19px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px;}
+.sh-sub,.sheet-sub{font-size:13px;color:var(--t2);margin-bottom:22px;line-height:1.6;}
+.sh-confirm,.sheet-confirm{width:100%;padding:16px;background:var(--t);color:var(--bg);border:none;border-radius:var(--rsm);font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;margin-top:16px;}
+.sh-confirm:disabled{opacity:.3;cursor:default;}
+.sh-cancel,.sheet-cancel{width:100%;padding:13px;background:none;border:0.5px solid var(--b);border-radius:var(--rsm);font-family:inherit;font-size:13px;color:var(--t2);cursor:pointer;margin-top:8px;}
+.di-row{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:0.5px solid var(--b);}
+.di-row:last-of-type{border-bottom:none;}
+.di-logo{width:34px;height:34px;border-radius:9px;background:var(--pill);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--t2);flex-shrink:0;}
+.di-logo img{width:100%;height:100%;object-fit:contain;padding:3px;}
+.di-name{font-size:13px;font-weight:500;color:var(--t);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.di-btns{display:flex;gap:5px;flex-shrink:0;}
+.di-btn{padding:6px 12px;border-radius:20px;font-family:inherit;font-size:11px;font-weight:600;cursor:pointer;border:0.5px solid var(--b);background:none;color:var(--t2);}
+.di-btn.y{background:rgba(0,204,136,.12);border-color:var(--green);color:var(--green);}
+.di-btn.n{background:rgba(255,51,85,.1);border-color:var(--red);color:var(--red);}
+.sms-ta{width:100%;background:var(--pill);border:0.5px solid var(--b);border-radius:var(--rsm);color:var(--t);font-family:inherit;font-size:12px;line-height:1.75;padding:12px 13px;outline:none;resize:none;height:110px;margin:8px 0 4px;}
+.sms-ta::placeholder{color:var(--t3);}
+.sms-ta:focus{border-color:var(--bm);}
+.sms-result-row{display:flex;align-items:center;gap:9px;background:var(--pill);border-radius:var(--rsm);padding:9px 12px;margin-bottom:5px;}
+.sms-chk{width:20px;height:20px;border-radius:6px;border:0.5px solid var(--bm);display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent;cursor:pointer;transition:all .12s;flex-shrink:0;}
+.sms-chk.on{background:var(--green);border-color:var(--green);color:#031A0E;}
+.bd-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:0.5px solid var(--b);}
+.bd-row:last-of-type{border-bottom:none;}
+.bd-name{font-size:13px;font-weight:500;color:var(--t);}
+.bd-input{background:var(--pill);border:0.5px solid var(--b);border-radius:7px;color:var(--t);font-family:inherit;font-size:13px;padding:7px 10px;outline:none;width:64px;text-align:center;}
+
+/* ONBOARDING */
+.ob-ov{position:fixed;inset:0;background:rgba(0,0,0,.88);display:flex;align-items:flex-end;justify-content:center;z-index:998;animation:fadeOv .25s ease;}
+.ob-sheet{background:#0C0C15;border:0.5px solid rgba(255,255,255,.09);border-radius:22px 22px 0 0;padding:32px 24px calc(40px + var(--safe-b));width:100%;max-width:480px;animation:slideSheet .3s cubic-bezier(.34,1.15,.64,1);}
+.ob-logo{font-size:18px;font-weight:800;letter-spacing:.12em;margin-bottom:24px;}
+.ob-logo b{color:var(--red);}
+.ob-stat{background:var(--pill);border-radius:var(--rsm);padding:14px 16px;margin-bottom:8px;}
+.ob-stat-n,.ob-n{font-size:28px;font-weight:800;color:var(--t);letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-bottom:2px;}
+.ob-stat-l,.ob-l{font-size:12px;color:var(--t2);}
+.ob-cta{width:100%;padding:17px;background:var(--red);border:none;border-radius:var(--rsm);font-family:inherit;font-size:15px;font-weight:700;color:#fff;cursor:pointer;margin-top:18px;}
+.ob-cta:active{opacity:.85;}
+.ob-skip{width:100%;padding:12px;background:none;border:none;font-family:inherit;font-size:13px;color:var(--t3);cursor:pointer;margin-top:6px;}
+
+::-webkit-scrollbar{width:0;}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="logo">SUB<b>CHECK</b></div>
+  <div class="hdr-right">
+    <button class="hdr-btn" onclick="openBillingEdit()">결제일</button>
+    <button class="hdr-btn" onclick="shareAll()">공유</button>
+  </div>
+</div>
+
+<div id="p0" class="panel on" style="margin-top:10px;">
+  <div class="hero">
+    <div class="hero-eyebrow">이번 달 구독 지출</div>
+    <div class="hero-amount"><span class="won">₩</span><span id="h-total">0</span></div>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-l">낭비 중인 금액</div>
+        <div class="stat-v" id="h-waste" style="color:var(--red);">₩0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-l">구독 · 위험</div>
+        <div class="stat-v" id="h-counts">0 · 0</div>
+      </div>
+    </div>
+    <div class="waste-rail"><div class="waste-fill" id="h-bar" style="width:0%"></div></div>
+  </div>
+
+  <div class="action-row">
+    <button class="action-btn primary" onclick="openSMS()">📱 카드 문자 자동인식</button>
+    <button class="action-btn secondary" onclick="openDiag()" id="diag-action-btn" style="display:none;">진단하기</button>
+  </div>
+
+  <div id="ud-banner" style="display:none;" class="banner" onclick="openDiag()">
+    <div class="banner-text" id="ud-text"></div>
+    <button class="banner-cta">진단 →</button>
+  </div>
+
+  <div class="section-hdr"><span class="section-title">빠른 추가</span></div>
+  <div class="chips" id="chips"></div>
+
+  <div class="add-form">
+    <div class="section-title" style="margin-bottom:10px;">직접 추가</div>
+    <div class="form-row">
+      <input type="text" id="i-name" placeholder="서비스 이름">
+      <input type="number" id="i-price" placeholder="금액(원)" min="0">
+    </div>
+    <div class="form-row2">
+      <select id="i-cycle"><option value="monthly">월간</option><option value="yearly">연간</option></select>
+      <input type="number" id="i-bday" placeholder="결제일" min="1" max="31">
+      <button class="form-submit" onclick="addManual()">추가</button>
+    </div>
+  </div>
+
+  <div class="section-hdr">
+    <span class="section-title">구독 목록</span>
+    <span id="sub-count" style="font-size:11px;color:var(--t3);"></span>
+  </div>
+  <div class="sub-list" id="sub-list"></div>
+</div>
+
+<div id="p1" class="panel">
+  <div id="notif-banner-wrap"></div>
+  <div class="tl-header">
+    <div class="tl-total-lbl">이번 달 남은 결제</div>
+    <div class="tl-total" id="tl-total">₩0</div>
+    <div class="tl-sub" id="tl-sub"></div>
+  </div>
+  <div class="section-hdr"><span class="section-title">결제 일정</span></div>
+  <div id="tl-list"></div>
+</div>
+
+<div id="p2" class="panel">
+  <div id="save-content"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-item on" onclick="switchTab(0,this)">
+    <div class="nav-icon">📋</div>
+    <div class="nav-lbl">구독 목록</div>
+    <div class="nav-pip"></div>
+  </div>
+  <div class="nav-item" onclick="switchTab(1,this)">
+    <div class="nav-icon">📅</div>
+    <div class="nav-lbl">다음 결제</div>
+    <div class="nav-pip"></div>
+  </div>
+  <div class="nav-item" onclick="switchTab(2,this)">
+    <div class="nav-icon">✂️</div>
+    <div class="nav-lbl">절약하기</div>
+    <div class="nav-pip"></div>
+  </div>
+</nav>
+
+<div id="diag-root"></div>
+<div id="sms-root"></div>
+<div id="billing-root"></div>
+<div id="ob-root"></div>
+<div id="canvas-root"></div>
+
+<script>
+/* ─── Data ─── */
+const USAGE = {
+  active:      {lbl:'이번 달 씀', clr:'#00D084', bg:'rgba(0,208,132,.13)',  waste:false},
+  inactive:    {lbl:'안 씀',      clr:'#FF3D5A', bg:'rgba(255,61,90,.13)',   waste:true},
+  undiagnosed: {lbl:'진단 필요',  clr:'#636380', bg:'rgba(99,99,128,.14)',   waste:false},
+};
+
+const CANCEL_URLS = {
+  'Netflix':         'https://www.netflix.com/cancel',
+  '유튜브 프리미엄': 'https://myaccount.google.com/payments-and-subscriptions',
+  'ChatGPT Plus':    'https://chat.openai.com/billing',
+  '쿠팡 로켓와우':   'https://www.coupang.com/np/member/wowclub',
+  '멜론':            'https://www.melon.com/mymusic/pay/mymusicPayInfoList.htm',
+  '네이버 플러스':   'https://new.mypage.naver.com/mypage/main',
+  '티빙':            'https://www.tving.com/user/mypage/subscribe',
+  '웨이브':          'https://www.wavve.com/mypage/subscriptionInfo',
+  '왓챠':            'https://watcha.com/settings/plans',
+  'Spotify':         'https://www.spotify.com/account/subscription/cancel',
+  'Adobe CC':        'https://account.adobe.com/plans',
+  'Microsoft 365':   'https://account.microsoft.com/services',
+  '밀리의서재':      'https://www.millie.co.kr/v3/myInfo/membership',
+  '클래스101':       'https://class101.net/ko/accounts/manage',
+  'Apple One':       'https://appleid.apple.com/',
+  '리디북스':        'https://ridibooks.com/account/settings',
+};
+
+const PRESETS = [
+  {name:'Netflix',         domain:'netflix.com',    price:17000, ini:'NF', clr:'#E50914'},
+  {name:'유튜브 프리미엄', domain:'youtube.com',    price:14900, ini:'YT', clr:'#FF0000'},
+  {name:'ChatGPT Plus',    domain:'openai.com',     price:27000, ini:'GP', clr:'#10A37F'},
+  {name:'쿠팡 로켓와우',   domain:'coupang.com',    price:7890,  ini:'CP', clr:'#FF6E00'},
+  {name:'멜론',            domain:'melon.com',      price:10900, ini:'ML', clr:'#00C73C'},
+  {name:'네이버 플러스',   domain:'naver.com',      price:4900,  ini:'NV', clr:'#03C75A'},
+  {name:'티빙',            domain:'tving.co.kr',    price:13900, ini:'TV', clr:'#FF153C'},
+  {name:'웨이브',          domain:'wavve.com',      price:13900, ini:'WV', clr:'#005CE8'},
+  {name:'왓챠',            domain:'watcha.com',     price:12900, ini:'WC', clr:'#FF2D55'},
+  {name:'Spotify',         domain:'spotify.com',    price:10900, ini:'SP', clr:'#1DB954'},
+  {name:'Adobe CC',        domain:'adobe.com',      price:30000, ini:'AD', clr:'#FF0000'},
+  {name:'Microsoft 365',   domain:'microsoft.com',  price:11700, ini:'MS', clr:'#0078D4'},
+  {name:'밀리의서재',      domain:'millie.co.kr',   price:9900,  ini:'MR', clr:'#5552FA'},
+  {name:'클래스101',       domain:'class101.net',   price:19900, ini:'CL', clr:'#FF4E36'},
+  {name:'Apple One',       domain:'apple.com',      price:19900, ini:'AP', clr:'#888888'},
+  {name:'리디북스',        domain:'ridibooks.com',  price:6500,  ini:'RD', clr:'#1A6DFF'},
+];
+
+const SMS_MAP = PRESETS.map((p,i) => ({
+  ...p,
+  keys: [
+    ['Netflix','넷플릭스'],
+    ['YouTube','유튜브','YT Premium'],
+    ['OPENAI','OpenAI','ChatGPT'],
+    ['Coupang','쿠팡','ROCKETWOW'],
+    ['Melon','멜론'],
+    ['NAVER','Naver','네이버플러스'],
+    ['TVING','티빙'],
+    ['Wavve','WAVVE','웨이브'],
+    ['WATCHA','왓챠'],
+    ['Spotify','스포티파이'],
+    ['Adobe','ADOBE'],
+    ['Microsoft','MS365'],
+    ['밀리','Millie'],
+    ['class101','클래스101'],
+    ['Apple','애플원'],
+    ['ridi','리디'],
+  ][i]
+}));
+
+/* ─── State ─── */
+let subs   = JSON.parse(localStorage.getItem('sc4') || '[]');
+let nextId = +localStorage.getItem('sc4_id') || 1;
+const added = new Set(JSON.parse(localStorage.getItem('sc4_added') || '[]'));
+
+function save() {
+  localStorage.setItem('sc4', JSON.stringify(subs));
+  localStorage.setItem('sc4_id', String(nextId));
+  localStorage.setItem('sc4_added', JSON.stringify([...added]));
+}
+
+/* ─── Helpers ─── */
+function mp(s) { return s.cycle === 'yearly' ? Math.round(s.price / 12) : s.price; }
+function fmt(n) { return Math.round(n).toLocaleString('ko-KR'); }
+
+function imgErr(el, ini, clr, sz, rx) {
+  const d = document.createElement('div');
+  d.style.cssText = `width:${sz}px;height:${sz}px;border-radius:${rx}px;background:${clr}22;display:flex;align-items:center;justify-content:center;font-size:${Math.round(sz*.27)}px;font-weight:800;color:${clr};`;
+  d.textContent = ini;
+  el.replaceWith(d);
+}
+function mkImg(s, sz=38, pad=4, rx=9) {
+  const ini = s.ini||(s.name||'?').slice(0,2).toUpperCase();
+  const clr = s.clr||'#555';
+  if (!s.domain) { const d=document.createElement('div'); d.style.cssText=`width:${sz}px;height:${sz}px;border-radius:${rx}px;background:${clr}22;display:flex;align-items:center;justify-content:center;font-size:${Math.round(sz*.27)}px;font-weight:800;color:${clr};`; d.textContent=ini; return d; }
+  const img=document.createElement('img');
+  img.src=`https://www.google.com/s2/favicons?sz=64&domain=${s.domain}`;
+  img.style.cssText=`width:${sz}px;height:${sz}px;object-fit:contain;padding:${pad}px;`;
+  img.onerror=function(){imgErr(this,ini,clr,sz,rx);};
+  return img;
+}
+
+function nextBillingDate(billingDay) {
+  if (!billingDay) return null;
+  const now = new Date();
+  let d = new Date(now.getFullYear(), now.getMonth(), billingDay);
+  if (d <= now) d = new Date(now.getFullYear(), now.getMonth()+1, billingDay);
+  return d;
+}
+function daysUntil(d) { return Math.ceil((d - new Date()) / 86400000); }
+const DAYS = ['일','월','화','수','목','금','토'];
+
+/* ─── Tab switching ─── */
+function switchTab(idx, el) {
+  document.querySelectorAll('.panel').forEach((p,i) => p.classList.toggle('on', i===idx));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('on'));
+  el.classList.add('on');
+  if (idx===1) renderTimeline();
+  if (idx===2) renderSavings();
+}
+
+/* ─── Render ─── */
+function renderAll() {
+  const total  = subs.reduce((a,s)=>a+mp(s),0);
+  const wastes = subs.filter(s=>s.usage==='inactive');
+  const waste  = wastes.reduce((a,s)=>a+mp(s),0);
+  const pct    = total>0 ? Math.round(waste/total*100) : 0;
+  const undiag = subs.filter(s=>s.usage==='undiagnosed');
+
+  document.getElementById('h-total').textContent  = fmt(total);
+  document.getElementById('h-waste').textContent  = '₩'+fmt(waste);
+  document.getElementById('h-counts').textContent = `${subs.length} / ${wastes.length}`;
+  document.getElementById('h-bar').style.width    = pct+'%';
+
+  const banner = document.getElementById('ud-banner');
+  if (undiag.length) {
+    document.getElementById('ud-text').textContent = `${undiag.length}개 구독 아직 진단 전이에요`;
+    banner.style.display='flex';
+  } else { banner.style.display='none'; }
+
+  // Chips
+  const chips=document.getElementById('chips'); chips.innerHTML='';
+  PRESETS.forEach((p,i)=>{
+    const on=added.has(p.name);
+    const c=document.createElement('div'); c.className='chip'+(on?' on':''); c.onclick=()=>addPreset(i);
+    const ci=document.createElement('div'); ci.className='ci'; ci.appendChild(mkImg(p,17,2,4));
+    const lb=document.createElement('span'); lb.textContent=p.name+(on?' ✓':'');
+    c.append(ci,lb); chips.appendChild(c);
+  });
+
+  // Sub list
+  const list=document.getElementById('sub-list'); list.innerHTML='';
+  if (!subs.length) {
+    const em=document.createElement('div'); em.className='empty';
+    em.innerHTML='아직 구독이 없어요.<br>위에서 추가하거나 카드 문자를 붙여넣어보세요.';
+    list.appendChild(em); return;
+  }
+  const order={inactive:0,undiagnosed:1,active:2};
+  [...subs].sort((a,b)=>(order[a.usage]??9)-(order[b.usage]??9)).forEach(s=>{
+    const u=USAGE[s.usage]||USAGE.undiagnosed;
+    const card=document.createElement('div'); card.className='sc'+(u.waste?' waste':'');
+    const lw=document.createElement('div'); lw.className='sl-logo'; lw.appendChild(mkImg(s));
+    const info=document.createElement('div');
+    const billingTxt = s.billingDay ? `매월 ${s.billingDay}일 결제` : '결제일 미설정';
+    info.innerHTML=`<div class="sn">${s.name}</div><div class="smeta"><span>₩${fmt(mp(s))}/월</span><span>·</span><span>${billingTxt}</span></div>`;
+    const sr=document.createElement('div'); sr.className='sr';
+    const db=document.createElement('button'); db.className='dbtn'; db.textContent='✕'; db.onclick=()=>{added.delete(s.name);subs=subs.filter(x=>x.id!==s.id);save();renderAll();};
+    const badge=document.createElement('button'); badge.className='ubadge'; badge.style.background=u.bg; badge.style.color=u.clr;
+    badge.textContent=u.lbl; badge.title='탭해서 상태 변경'; badge.onclick=()=>cycleDiag(s.id);
+    sr.append(db,badge); card.append(lw,info,sr); list.appendChild(card);
+  });
+}
+
+function renderTimeline() {
+  const now = new Date();
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth()+1, 0);
+  const withDate = subs
+    .map(s=>({...s, nextDate: nextBillingDate(s.billingDay)}))
+    .filter(s=>s.nextDate && s.nextDate <= endOfMonth)
+    .sort((a,b)=>a.nextDate-b.nextDate);
+
+  const remaining = withDate.reduce((a,s)=>a+mp(s),0);
+  document.getElementById('tl-total').textContent='₩'+fmt(remaining);
+  document.getElementById('tl-sub').textContent=
+    withDate.length ? `이번 달 남은 결제 ${withDate.length}건` : '이번 달 남은 결제가 없어요';
+
+  const el=document.getElementById('tl-list'); el.innerHTML='';
+  if (!subs.length || !withDate.length) {
+    const em=document.createElement('div'); em.className='tl-no-billing';
+    em.innerHTML='결제일이 설정된 구독이 없어요.<br>구독 목록에서 결제일을 설정해보세요.<br>';
+    const btn=document.createElement('button'); btn.className='edit-billing-btn'; btn.textContent='지금 결제일 설정하기 →'; btn.onclick=openBillingEdit;
+    em.appendChild(btn); el.appendChild(em); return;
+  }
+
+  const wrap=document.createElement('div'); wrap.className='tl-list';
+  withDate.forEach(s=>{
+    const days=daysUntil(s.nextDate);
+    const u=USAGE[s.usage]||USAGE.undiagnosed;
+    const row=document.createElement('div'); row.className='tl-row';
+
+    const dc=document.createElement('div'); dc.className='tl-date-col';
+    const dayN=document.createElement('div'); dayN.className='tl-day'; dayN.textContent=s.nextDate.getDate();
+    const dowN=document.createElement('div'); dowN.className='tl-dow'; dowN.textContent=DAYS[s.nextDate.getDay()]+'요일';
+    let badge='';
+    if (days<=0) badge=`<div class="tl-badge" style="background:rgba(255,61,90,.15);color:var(--red);">오늘</div>`;
+    else if (days<=3) badge=`<div class="tl-badge" style="background:rgba(255,176,32,.15);color:var(--amber);">D-${days}</div>`;
+    dc.append(dayN,dowN);
+    if (badge) dc.innerHTML+=badge;
+
+    const lw=document.createElement('div'); lw.className='tl-logo'; lw.appendChild(mkImg(s,32,3,8));
+    const nm=document.createElement('div');
+    nm.innerHTML=`<div class="tl-name">${s.name}</div>${u.waste?`<div class="tl-waste-tag">⚠ 안 쓰는 구독</div>`:''}`;
+    const pr=document.createElement('div'); pr.className='tl-price';
+    pr.style.color = u.waste ? 'var(--red)' : 'var(--t)';
+    pr.textContent='₩'+fmt(mp(s));
+    row.append(dc,lw,nm,pr); wrap.appendChild(row);
+  });
+  el.appendChild(wrap);
+}
+
+/* ─── Usage cycle ─── */
+function cycleDiag(id) {
+  const s=subs.find(x=>x.id===id); if(!s) return;
+  const cycle={undiagnosed:'active',active:'inactive',inactive:'active'};
+  s.usage=cycle[s.usage]||'active'; save(); renderAll();
+}
+
+/* ─── Batch diagnosis ─── */
+let diagState={};
+function openDiag() {
+  const targets=subs.filter(s=>s.usage==='undiagnosed'); if(!targets.length) return;
+  diagState={}; targets.forEach(s=>{diagState[s.id]=null;});
+  buildDiagModal(targets);
+}
+function buildDiagModal(targets) {
+  const root=document.getElementById('diag-root'); root.innerHTML='';
+  const ov=document.createElement('div'); ov.className='ov';
+  ov.addEventListener('click',e=>{if(e.target===ov)closeDiag();});
+  const sh=document.createElement('div'); sh.className='sheet';
+  sh.innerHTML=`<div class="sh-title">이번 달에 썼나요?</div>
+    <div class="sh-sub">${targets.length}개 구독 · "✓ 써요 / ✗ 안 써요" 탭만 하면 끝이에요.</div>`;
+  const items=document.createElement('div');
+  targets.forEach(s=>{
+    const row=document.createElement('div'); row.className='di-row';
+    const lw=document.createElement('div'); lw.className='di-logo'; lw.appendChild(mkImg(s,34,3,8));
+    const nm=document.createElement('div'); nm.className='di-name'; nm.textContent=s.name;
+    const btns=document.createElement('div'); btns.className='di-btns';
+    const bY=document.createElement('button'); bY.className='di-btn'+(diagState[s.id]==='yes'?' y':''); bY.textContent='✓ 써요';
+    bY.onclick=()=>{diagState[s.id]='yes';buildDiagModal(targets);};
+    const bN=document.createElement('button'); bN.className='di-btn'+(diagState[s.id]==='no'?' n':''); bN.textContent='✗ 안 써요';
+    bN.onclick=()=>{diagState[s.id]='no';buildDiagModal(targets);};
+    btns.append(bY,bN); row.append(lw,nm,btns); items.appendChild(row);
+  });
+  sh.appendChild(items);
+  const answered=Object.values(diagState).filter(v=>v!==null).length;
+  const conf=document.createElement('button'); conf.className='sh-confirm'; conf.disabled=!answered;
+  conf.textContent=answered===targets.length?`완료 — ${answered}개 저장하기 →`:`${answered}/${targets.length}개 답했어요`;
+  conf.onclick=()=>{
+    Object.entries(diagState).forEach(([id,val])=>{
+      if(!val) return;
+      const s=subs.find(x=>x.id===+id); if(s) s.usage=val==='yes'?'active':'inactive';
+    });
+    save(); closeDiag(); renderAll();
+  };
+  const cancel=document.createElement('button'); cancel.className='sh-cancel'; cancel.textContent='나중에 할게요'; cancel.onclick=closeDiag;
+  sh.append(conf,cancel); ov.appendChild(sh); root.appendChild(ov);
+}
+function closeDiag(){document.getElementById('diag-root').innerHTML='';}
+
+/* ─── Add ─── */
+function addPreset(idx) {
+  const p=PRESETS[idx]; if(!p||added.has(p.name)) return;
+  subs.push({id:nextId++,name:p.name,price:p.price,cycle:'monthly',usage:'undiagnosed',billingDay:null,domain:p.domain,ini:p.ini,clr:p.clr});
+  added.add(p.name); save(); renderAll();
+}
+function addManual() {
+  const name=document.getElementById('i-name').value.trim();
+  const price=parseInt(document.getElementById('i-price').value)||0;
+  const bday=parseInt(document.getElementById('i-bday').value)||null;
+  if(!name||!price) return;
+  subs.push({id:nextId++,name,price,cycle:document.getElementById('i-cycle').value,usage:'undiagnosed',billingDay:bday});
+  document.getElementById('i-name').value=''; document.getElementById('i-price').value=''; document.getElementById('i-bday').value='';
+  save(); renderAll();
+}
+
+/* ─── Billing day edit ─── */
+function openBillingEdit() {
+  const root=document.getElementById('billing-root'); root.innerHTML='';
+  const ov=document.createElement('div'); ov.className='ov';
+  ov.addEventListener('click',e=>{if(e.target===ov)closeBilling();});
+  const sh=document.createElement('div'); sh.className='sheet';
+  sh.innerHTML=`<div class="sh-title">결제일 설정</div>
+    <div class="sh-sub">매월 몇 일에 결제되는지 입력하면<br>다음 결제 탭에서 일정을 확인할 수 있어요.</div>`;
+  if(!subs.length){sh.innerHTML+=`<p style="color:var(--t2);font-size:13px;padding:20px 0;">추가된 구독이 없어요.</p>`;}
+  subs.forEach(s=>{
+    const row=document.createElement('div'); row.className='bd-row';
+    const nm=document.createElement('div'); nm.className='bd-name'; nm.textContent=s.name;
+    const inp=document.createElement('input'); inp.type='number'; inp.className='bd-input';
+    inp.min=1; inp.max=31; inp.placeholder='일'; inp.value=s.billingDay||'';
+    inp.onchange=()=>{const v=parseInt(inp.value); s.billingDay=(v>=1&&v<=31)?v:null; save(); renderTimeline();};
+    row.append(nm,inp); sh.appendChild(row);
+  });
+  const done=document.createElement('button'); done.className='sh-confirm'; done.textContent='완료';
+  done.onclick=closeBilling;
+  const cl=document.createElement('button'); cl.className='sh-cancel'; cl.textContent='닫기'; cl.onclick=closeBilling;
+  sh.append(done,cl); ov.appendChild(sh); root.appendChild(ov);
+}
+function closeBilling(){document.getElementById('billing-root').innerHTML='';}
+
+/* ─── SMS parsing ─── */
+const CARD_NOISE=/삼성|현대|신한|국민|하나|기업|농협|씨티|우리|롯데|BC|IBK|NH|KB|SC|카카오|네이버|토스|페이|카드|승인|결제|청구|이용|출금|완료|알림|Web발신/gi;
+function parseSMS(raw) {
+  const found=[],seen=new Set();
+  raw.split('\n').map(l=>l.trim()).filter(Boolean).forEach(line=>{
+    if(!/(승인|결제|청구|이용|출금|payment|invoice)/i.test(line)) return;
+    const am=line.match(/(\d{1,3}(?:,\d{3})*)\s*원/); if(!am) return;
+    const price=parseInt(am[1].replace(/,/g,''));
+    if(price<990||price>999999) return;
+    const svc=SMS_MAP.find(s=>s.keys.some(k=>line.toLowerCase().includes(k.toLowerCase())));
+    if(svc){
+      if(seen.has(svc.name)) return; seen.add(svc.name);
+      found.push({...svc,detectedPrice:price});
+    } else {
+      const clean=line.replace(/\[.*?\]/g,'').replace(/\d{2,4}[.\-/]\d{1,2}[.\-/]\d{1,2}/g,'').replace(/\d{1,2}:\d{2}/g,'').replace(/(\d{1,3}(?:,\d{3})*)\s*원/g,'').replace(CARD_NOISE,'').replace(/[^\w가-힣\s]/g,' ').trim();
+      const w=clean.split(/\s+/).find(x=>x.length>=2&&x.length<=20);
+      if(w&&!seen.has(w)){seen.add(w);found.push({name:w,price,detectedPrice:price,ini:w.slice(0,2).toUpperCase(),clr:'#636380'});}
+    }
+  });
+  return found;
+}
+
+let smsRes=[],smsChk=new Set();
+function openSMS(){
+  smsRes=[];smsChk.clear();
+  const root=document.getElementById('sms-root'); root.innerHTML='';
+  const ov=document.createElement('div'); ov.className='ov';
+  ov.addEventListener('click',e=>{if(e.target===ov)closeSMS();});
+  ov.innerHTML=`<div class="sheet">
+    <div class="sh-title">📱 카드 문자 붙여넣기</div>
+    <div class="sh-sub">카드사 결제 알림을 복사해서 붙여넣으세요.<br>서비스명과 금액을 자동으로 인식해요.</div>
+    <textarea class="sms-ta" id="sms-ta" placeholder="예시)\n[삼성카드] 17,000원 Netflix 05/09 14:23\n[카카오페이] 스포티파이 10,900원 결제 완료\nBC카드 승인 7,890원 쿠팡 05/08"></textarea>
+    <div style="font-size:10px;color:var(--t3);margin-bottom:12px;">20개 카드사 + 카카오페이·네이버페이 · 내용은 서버로 전송되지 않아요</div>
+    <div id="sms-ra"></div>
+    <div id="sms-addbtn" style="display:none;"><button class="sh-confirm" onclick="confirmSMS()">선택한 구독 추가하기 →</button></div>
+    <button class="sh-cancel" onclick="closeSMS()">닫기</button>
+  </div>`;
+  root.appendChild(ov);
+  document.getElementById('sms-ta').addEventListener('input',function(){smsRes=parseSMS(this.value);smsChk=new Set(smsRes.map((_,i)=>i));drawSMSResults();});
+}
+function drawSMSResults(){
+  const area=document.getElementById('sms-ra'),btn=document.getElementById('sms-addbtn'); if(!area) return;
+  area.innerHTML='';
+  if(!smsRes.length){btn.style.display='none';return;}
+  const h=document.createElement('div'); h.style.cssText='font-size:10px;font-weight:700;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px;'; h.textContent=smsRes.length+'개 인식됨';
+  area.appendChild(h);
+  smsRes.forEach((s,i)=>{
+    const on=smsChk.has(i);
+    const row=document.createElement('div'); row.className='sms-result-row';
+    const chk=document.createElement('div'); chk.className='sms-chk'+(on?' on':''); chk.textContent='✓';
+    chk.onclick=()=>{on?smsChk.delete(i):smsChk.add(i);drawSMSResults();};
+    const lw=document.createElement('div'); lw.style.cssText=`width:28px;height:28px;border-radius:7px;background:${(s.clr||'#555')}22;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:${s.clr||'#555'};flex-shrink:0;overflow:hidden;`;
+    if(s.domain){const im=document.createElement('img');im.src=`https://www.google.com/s2/favicons?sz=64&domain=${s.domain}`;im.style.cssText='width:28px;height:28px;object-fit:contain;padding:2px;';im.onerror=function(){imgErr(this,s.ini||'?',s.clr||'#555',28,7);};lw.appendChild(im);}else{lw.textContent=s.ini||'?';}
+    const inf=document.createElement('div'); inf.style.flex='1';
+    inf.innerHTML=`<div style="font-size:13px;font-weight:600;color:var(--t);">${s.name}</div><div style="font-size:11px;color:var(--t2);">₩${fmt(s.detectedPrice||s.price)}/월</div>`;
+    row.append(chk,lw,inf); area.appendChild(row);
+  });
+  btn.style.display='block';
+}
+function confirmSMS(){
+  smsRes.filter((_,i)=>smsChk.has(i)).forEach(t=>{
+    if(subs.find(s=>s.name===t.name)) return;
+    subs.push({id:nextId++,name:t.name,price:t.detectedPrice||t.price,cycle:'monthly',usage:'undiagnosed',billingDay:null,domain:t.domain,ini:t.ini,clr:t.clr});
+    added.add(t.name);
+  });
+  save(); closeSMS(); renderAll();
+}
+function closeSMS(){document.getElementById('sms-root').innerHTML='';}
+
+/* ─── Share text ─── */
+function shareAll(){
+  const wastes=subs.filter(s=>s.usage==='inactive');
+  const tw=wastes.reduce((a,s)=>a+mp(s),0);
+  const total=subs.reduce((a,s)=>a+mp(s),0);
+  const text=`📊 내 구독 낭비 리포트\n\n매달 총 ₩${fmt(total)} 구독 중\n그중 ₩${fmt(tw)}은 쓰지도 않는 구독이에요\n\n지금 해지하면 연 ₩${fmt(tw*12)} 아낄 수 있어요 💸\n\n#SUBCHECK #구독정리`;
+  if(navigator.share) navigator.share({text}).catch(()=>{});
+  else navigator.clipboard.writeText(text).then(()=>alert('클립보드에 복사됐어요 📋')).catch(()=>alert(text));
+}
+
+/* ════════════════════════════
+   ① 공유 이미지 카드 (Canvas)
+════════════════════════════ */
+function generateShareCard(){
+  const wastes = subs.filter(s=>s.usage==='inactive');
+  const tw     = wastes.reduce((a,s)=>a+mp(s),0);
+  const total  = subs.reduce((a,s)=>a+mp(s),0);
+
+  const W=600, H=800;
+  const canvas=document.createElement('canvas');
+  canvas.width=W; canvas.height=H;
+  const ctx=canvas.getContext('2d');
+
+  // Background
+  ctx.fillStyle='#08080D';
+  ctx.fillRect(0,0,W,H);
+
+  // Subtle grid lines
+  ctx.strokeStyle='rgba(255,255,255,0.03)';
+  ctx.lineWidth=1;
+  for(let y=80;y<H;y+=80){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+  // Top accent line
+  const grad=ctx.createLinearGradient(0,0,W,0);
+  grad.addColorStop(0,'#FF3D5A');
+  grad.addColorStop(1,'#8B7FF0');
+  ctx.fillStyle=grad;
+  ctx.fillRect(0,0,W,3);
+
+  // Logo
+  ctx.font='800 20px Pretendard,sans-serif';
+  ctx.fillStyle='#FF3D5A';
+  ctx.fillText('SUB', 48, 68);
+  ctx.fillStyle='#EEEEF8';
+  ctx.fillText('CHECK', 48+ctx.measureText('SUB').width, 68);
+
+  // Date
+  const now=new Date();
+  ctx.font='400 13px Pretendard,sans-serif';
+  ctx.fillStyle='rgba(255,255,255,0.25)';
+  ctx.textAlign='right';
+  ctx.fillText(`${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')} 리포트`, W-48, 68);
+  ctx.textAlign='left';
+
+  // Divider
+  ctx.fillStyle='rgba(255,255,255,0.06)';
+  ctx.fillRect(48,88,W-96,1);
+
+  // Annual waste (hero number)
+  ctx.font='400 14px Pretendard,sans-serif';
+  ctx.fillStyle='rgba(255,61,90,0.7)';
+  ctx.fillText('지금 해지하면 연간 절약 가능', 48, 148);
+
+  ctx.font='800 72px Pretendard,sans-serif';
+  ctx.fillStyle='#FF3D5A';
+  const annualTxt='₩'+fmt(tw*12);
+  ctx.fillText(annualTxt, 48, 240);
+
+  // Monthly summary
+  ctx.font='400 15px Pretendard,sans-serif';
+  ctx.fillStyle='rgba(238,238,248,0.45)';
+  ctx.fillText(`월 총 구독 ₩${fmt(total)}  ·  낭비 중 ₩${fmt(tw)}/월`, 48, 278);
+
+  // Divider
+  ctx.fillStyle='rgba(255,255,255,0.06)';
+  ctx.fillRect(48,305,W-96,1);
+
+  // Waste list
+  ctx.font='700 13px Pretendard,sans-serif';
+  ctx.fillStyle='rgba(255,61,90,0.6)';
+  ctx.fillText('해지하면 좋을 구독', 48, 340);
+
+  const showWastes=wastes.slice(0,5);
+  showWastes.forEach((s,i)=>{
+    const y=380+i*62;
+    // Card bg
+    ctx.fillStyle='rgba(255,255,255,0.03)';
+    roundRect(ctx,48,y-18,W-96,50,8);
+    ctx.fill();
+    // Name
+    ctx.font='600 15px Pretendard,sans-serif';
+    ctx.fillStyle='#EEEEF8';
+    ctx.fillText(s.name,70,y+8);
+    // Price
+    ctx.font='700 15px Pretendard,sans-serif';
+    ctx.fillStyle='#FF3D5A';
+    ctx.textAlign='right';
+    ctx.fillText('월 ₩'+fmt(mp(s)),W-56,y+8);
+    ctx.textAlign='left';
+    ctx.font='400 11px Pretendard,sans-serif';
+    ctx.fillStyle='rgba(255,255,255,0.25)';
+    ctx.textAlign='right';
+    ctx.fillText('연 ₩'+fmt(mp(s)*12)+' 낭비',W-56,y+22);
+    ctx.textAlign='left';
+  });
+
+  if(!wastes.length){
+    ctx.font='500 16px Pretendard,sans-serif';
+    ctx.fillStyle='rgba(0,208,132,0.8)';
+    ctx.fillText('✅ 낭비 중인 구독이 없어요!',48,400);
+  }
+
+  // Bottom divider
+  ctx.fillStyle='rgba(255,255,255,0.06)';
+  ctx.fillRect(48,H-90,W-96,1);
+
+  // Footer
+  ctx.font='700 13px Pretendard,sans-serif';
+  ctx.fillStyle='rgba(255,255,255,0.2)';
+  ctx.fillText('SUBCHECK — 구독 낭비 탐지기', 48, H-52);
+  ctx.font='400 12px Pretendard,sans-serif';
+  ctx.fillStyle='rgba(255,255,255,0.1)';
+  ctx.fillText('내 구독, 제대로 관리하고 있나요?', 48, H-32);
+
+  // Download / share
+  document.fonts.ready.then(()=>{
+    try {
+      canvas.toBlob(blob=>{
+        if(!blob) { alert('이미지 생성에 실패했어요.'); return; }
+        const url=URL.createObjectURL(blob);
+        if(navigator.share && navigator.canShare){
+          const file=new File([blob],'subcheck-report.png',{type:'image/png'});
+          if(navigator.canShare({files:[file]})){
+            navigator.share({files:[file],title:'내 구독 낭비 리포트'})
+              .catch(()=>downloadCanvas(url));
+          } else { downloadCanvas(url); }
+        } else { downloadCanvas(url); }
+      },'image/png');
+    } catch(e) { downloadCanvas(canvas.toDataURL('image/png').replace('image/png','image/octet-stream')); }
+  });
+}
+
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+}
+
+function downloadCanvas(url){
+  const a=document.createElement('a');
+  a.href=url; a.download='subcheck-report.png'; a.click();
+}
+
+/* ════════════════════════════
+   ② 온보딩
+════════════════════════════ */
+function checkOnboarding(){
+  if(localStorage.getItem('sc4_onboarded')) return;
+  const root=document.getElementById('ob-root');
+  const ov=document.createElement('div'); ov.className='ob-ov';
+  ov.innerHTML=`<div class="ob-sheet">
+    <div class="ob-logo">SUB<b>CHECK</b></div>
+    <div style="font-size:19px;font-weight:700;color:var(--t);letter-spacing:-.02em;margin-bottom:6px;">구독, 얼마나 낭비하고 있나요?</div>
+    <div style="font-size:13px;color:var(--t2);line-height:1.65;margin-bottom:20px;">카드 결제 문자 몇 개만 붙여넣으면<br>내가 매달 얼마를 낭비하는지 바로 알 수 있어요.</div>
+    <div class="ob-stat">
+      <div class="ob-stat-n">₩40,530</div>
+      <div class="ob-stat-l">한국인 평균 월 구독료 (서울시 2024 조사)</div>
+    </div>
+    <div class="ob-stat">
+      <div class="ob-stat-n" style="color:var(--red);">₩340,000+</div>
+      <div class="ob-stat-l">소규모 사업자 평균 월 구독 낭비액</div>
+    </div>
+    <button class="ob-cta" onclick="startOnboarding()">📱 카드 문자로 바로 시작하기</button>
+    <button class="ob-skip" onclick="dismissOnboarding()">나중에 직접 추가할게요</button>
+  </div>`;
+  root.appendChild(ov);
+}
+
+function startOnboarding(){
+  dismissOnboarding();
+  setTimeout(()=>openSMS(), 200);
+}
+
+function dismissOnboarding(){
+  localStorage.setItem('sc4_onboarded','1');
+  document.getElementById('ob-root').innerHTML='';
+}
+
+/* ════════════════════════════
+   ③ 절약 누적 히스토리
+════════════════════════════ */
+// 'cancelled' usage 추가
+USAGE.cancelled = {lbl:'해지 완료', clr:'#00D084', bg:'rgba(0,208,132,.10)', waste:false};
+
+function cancelSub(id){
+  const s=subs.find(x=>x.id===id); if(!s) return;
+  s.usage='cancelled';
+  s.cancelledAt=Date.now();
+  save(); renderAll(); renderSavings();
+}
+
+function renderCancelledHistory(container){
+  const cancelled=subs.filter(s=>s.usage==='cancelled');
+  if(!cancelled.length) return;
+
+  const totalSaved=cancelled.reduce((a,s)=>{
+    const months=s.cancelledAt ? Math.max(1,Math.round((Date.now()-s.cancelledAt)/2592000000)) : 1;
+    return a+mp(s)*months;
+  },0);
+
+  const wrap=document.createElement('div');
+  wrap.style.marginTop='16px';
+
+  const lbl=document.createElement('div'); lbl.className='sl'; lbl.textContent='해지 완료 — 이만큼 아꼈어요';
+  wrap.appendChild(lbl);
+
+  const totalCard=document.createElement('div'); totalCard.className='hist-total';
+  totalCard.innerHTML=`<div class="hist-total-lbl">지금까지 누적 절약</div>
+    <div class="hist-total-n">₩${fmt(totalSaved)}</div>`;
+  wrap.appendChild(totalCard);
+
+  const list=document.createElement('div');
+  [...cancelled].sort((a,b)=>(b.cancelledAt||0)-(a.cancelledAt||0)).forEach(s=>{
+    const months=s.cancelledAt ? Math.max(1,Math.round((Date.now()-s.cancelledAt)/2592000000)) : 1;
+    const saved=mp(s)*months;
+    const dateStr=s.cancelledAt ? new Date(s.cancelledAt).toLocaleDateString('ko-KR',{month:'short',day:'numeric'}) : '';
+    const row=document.createElement('div'); row.className='hist-item';
+    const lw=document.createElement('div'); lw.className='hist-logo'; lw.appendChild(mkImg(s,30,3,8));
+    const info=document.createElement('div'); info.style.flex='1';
+    info.innerHTML=`<div class="hist-name">${s.name}</div><div class="hist-date">${dateStr} 해지</div>`;
+    const amt=document.createElement('div'); amt.style.textAlign='right';
+    amt.innerHTML=`<div class="hist-save">₩${fmt(saved)}</div><div class="hist-months">${months}개월 절약</div>`;
+    const rb=document.createElement('button');
+    rb.style.cssText='background:none;border:none;color:var(--t3);font-size:11px;cursor:pointer;padding:0 0 0 8px;white-space:nowrap;';
+    rb.textContent='되살리기';
+    rb.onclick=()=>{s.usage='inactive';delete s.cancelledAt;save();renderAll();renderSavings();};
+    row.append(lw,info,amt,rb);
+    list.appendChild(row);
+  });
+  wrap.appendChild(list);
+  container.appendChild(wrap);
+}
+
+/* ════════════════════════════
+   ④ 브라우저 알림
+════════════════════════════ */
+function renderNotifBanner(){
+  const wrap=document.getElementById('notif-banner-wrap'); if(!wrap) return;
+  wrap.innerHTML='';
+  if(!('Notification' in window)) return;
+
+  if(Notification.permission==='granted'){
+    const d3=subs.filter(s=>{
+      if(!s.billingDay) return false;
+      const days=daysUntil(nextBillingDate(s.billingDay));
+      return days>=0&&days<=3;
+    });
+    if(d3.length){
+      const b=document.createElement('div'); b.className='notif-banner';
+      b.innerHTML=`<div class="notif-text">🔔 ${d3[0].name} 외 ${d3.length}건 결제 3일 이내예요</div>
+        <span class="notif-granted">알림 켜짐 ✓</span>`;
+      wrap.appendChild(b);
+    }
+    return;
+  }
+
+  if(Notification.permission==='denied') return;
+
+  const b=document.createElement('div'); b.className='notif-banner';
+  b.innerHTML=`<div class="notif-text">결제 3일 전에 알려드릴게요<br><span style="font-size:11px;opacity:.7;">안 쓰는 구독 놓치지 마세요</span></div>
+    <button class="notif-btn" onclick="requestNotif()">알림 받기</button>`;
+  wrap.appendChild(b);
+}
+
+function requestNotif(){
+  if(!('Notification' in window)) return;
+  Notification.requestPermission().then(p=>{
+    if(p==='granted'){
+      checkAndNotify();
+      renderNotifBanner();
+    }
+  });
+}
+
+function checkAndNotify(){
+  if(!('Notification' in window)) return;
+  if(Notification.permission!=='granted') return;
+  subs.forEach(s=>{
+    if(!s.billingDay||!s.usage) return;
+    const nd=nextBillingDate(s.billingDay);
+    const days=daysUntil(nd);
+    if(days<0||days>3) return;
+    const u=USAGE[s.usage];
+    const body=u&&u.waste
+      ? `안 쓰는 구독인데 ${days===0?'오늘':days+'일 후'} ₩${fmt(mp(s))} 결제 예정이에요. 해지할까요?`
+      : `${days===0?'오늘':days+'일 후'} ₩${fmt(mp(s))} 결제 예정이에요.`;
+    new Notification(`📅 ${s.name}`,{body,icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%23FF3D5A"/><text y=".9em" font-size="80" x="10">💳</text></svg>'});
+  });
+}
+
+/* ─── renderSavings 업데이트 (해지완료 + 이미지 카드 버튼) ─── */
+function renderSavings(){
+  const wastes=subs.filter(s=>s.usage==='inactive');
+  const tw=wastes.reduce((a,s)=>a+mp(s),0);
+  const el=document.getElementById('save-content'); el.innerHTML='';
+
+  if(!wastes.length){
+    const has=subs.some(s=>s.usage==='cancelled');
+    if(!has){
+      el.innerHTML=`<div class="save-empty">
+        <div style="font-size:32px;margin-bottom:12px;">✅</div>
+        <div style="font-size:14px;font-weight:600;color:var(--t);margin-bottom:6px;">낭비 중인 구독이 없어요</div>
+        <div style="font-size:12px;color:var(--t2);">구독 목록에서 "안 씀" 구독을 표시하면<br>여기서 해지 방법을 안내해드려요.</div>
+      </div>`;
+    }
+    renderCancelledHistory(el);
+    return;
+  }
+
+  // Image share button
+  const imgBtn=document.createElement('button'); imgBtn.className='card-share-btn';
+  imgBtn.innerHTML='🎨 리포트 이미지 카드 만들기 → 공유';
+  imgBtn.onclick=generateShareCard;
+  el.appendChild(imgBtn);
+
+  // Hero
+  const hero=document.createElement('div'); hero.className='save-hero';
+  hero.innerHTML=`<div class="save-lbl">해지하면 돌아오는 돈</div>
+    <div class="save-n">₩${fmt(tw*12)}<span style="font-size:18px;font-weight:500;color:rgba(255,90,114,.7);">/년</span></div>
+    <div class="save-desc">월 ₩${fmt(tw)} · ${wastes.length}개 구독 해지 시</div>`;
+  el.appendChild(hero);
+
+  const lbl=document.createElement('div'); lbl.className='sl'; lbl.textContent='지금 해지할 수 있어요';
+  el.appendChild(lbl);
+
+  wastes.forEach(s=>{
+    const cancelUrl=CANCEL_URLS[s.name];
+    const card=document.createElement('div'); card.className='cancel-card';
+    const header=document.createElement('div'); header.className='cc-header';
+    const lw=document.createElement('div'); lw.className='cc-logo'; lw.appendChild(mkImg(s,36,3,9));
+    const ni=document.createElement('div');
+    ni.innerHTML=`<div class="cc-name">${s.name}</div><div class="cc-price">₩${fmt(mp(s))}/월 · 연 ₩${fmt(mp(s)*12)}</div>`;
+    header.append(lw,ni);
+
+    const savings=document.createElement('div'); savings.className='cc-savings';
+    savings.innerHTML=`<div class="cc-save-item"><div class="cc-save-lbl">월 절약</div><div class="cc-save-val">₩${fmt(mp(s))}</div></div>
+      <div class="cc-save-item"><div class="cc-save-lbl">연 절약</div><div class="cc-save-val">₩${fmt(mp(s)*12)}</div></div>`;
+
+    const actions=document.createElement('div'); actions.className='cc-actions';
+
+    // 해지 링크
+    if(cancelUrl){
+      const ca=document.createElement('a'); ca.className='cancel-btn'; ca.href=cancelUrl; ca.target='_blank'; ca.rel='noopener';
+      ca.innerHTML='✂️ 지금 해지'; actions.appendChild(ca);
+    } else {
+      const ca=document.createElement('button'); ca.className='cancel-btn'; ca.textContent='✂️ 해지하기';
+      ca.onclick=()=>alert(`${s.name}\n공식 앱 → 설정 → 구독 관리 → 해지`);
+      actions.appendChild(ca);
+    }
+
+    // 해지 완료 버튼 (히스토리 저장)
+    const done=document.createElement('button'); done.className='keep-btn';
+    done.style.cssText='padding:10px 10px;background:rgba(0,208,132,.08);border:1px solid rgba(0,208,132,.2);color:var(--green);font-size:11px;font-weight:600;border-radius:var(--rxs);cursor:pointer;white-space:nowrap;font-family:inherit;';
+    done.textContent='해지 완료 ✓';
+    done.onclick=()=>cancelSub(s.id);
+    actions.appendChild(done);
+
+    // 유지 버튼
+    const kb=document.createElement('button'); kb.className='keep-btn'; kb.textContent='유지';
+    kb.onclick=()=>{const t=subs.find(x=>x.id===s.id);if(t){t.usage='active';save();renderAll();renderSavings();}};
+    actions.appendChild(kb);
+
+    card.append(header,savings,actions); el.appendChild(card);
+  });
+
+  // 공유 버튼
+  const shareBtn=document.createElement('button'); shareBtn.className='share-all-btn'; shareBtn.onclick=shareAll;
+  shareBtn.innerHTML='📤 결과 텍스트 공유하기';
+  el.appendChild(shareBtn);
+
+  // 누적 히스토리
+  renderCancelledHistory(el);
+}
+
+/* ─── Init ─── */
+try { renderAll(); } catch(e){ console.error('renderAll',e); }
+try { renderNotifBanner(); } catch(e){ console.error('notif',e); }
+try { checkAndNotify(); } catch(e){ console.error('notify',e); }
+try { checkOnboarding(); } catch(e){ console.error('onboard',e); }
+
+/* ─── Service Worker 등록 ─── */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.log('SW failed:', err));
+  });
+}
+
+/* ─── 홈 화면 추가 배너 ─── */
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  showInstallBanner();
+});
+
+function showInstallBanner() {
+  if (localStorage.getItem('sc4_installed')) return;
+  const banner = document.createElement('div');
+  banner.id = 'install-banner';
+  banner.style.cssText = `position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+    width:calc(100% - 40px);max-width:440px;
+    background:#1A1A2E;border:1px solid rgba(78,139,240,.3);
+    border-radius:14px;padding:14px 16px;display:flex;
+    align-items:center;gap:12px;z-index:200;
+    animation:shin .3s cubic-bezier(.34,1.15,.64,1);`;
+  banner.innerHTML = `
+    <img src="icon-192.png" style="width:40px;height:40px;border-radius:10px;flex-shrink:0;">
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:13px;font-weight:700;color:#EEEEF8;">홈 화면에 추가하기</div>
+      <div style="font-size:11px;color:#636380;margin-top:2px;">앱처럼 바로 열 수 있어요</div>
+    </div>
+    <button onclick="installApp()" style="background:#4E8BF0;color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;padding:7px 13px;cursor:pointer;flex-shrink:0;">추가</button>
+    <button onclick="dismissInstall()" style="background:none;border:none;color:#636380;font-size:18px;cursor:pointer;padding:0;line-height:1;flex-shrink:0;">✕</button>`;
+  document.body.appendChild(banner);
+}
+
+function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(r => {
+    if (r.outcome === 'accepted') {
+      localStorage.setItem('sc4_installed', '1');
+      document.getElementById('install-banner')?.remove();
+    }
+    deferredPrompt = null;
+  });
+}
+
+function dismissInstall() {
+  localStorage.setItem('sc4_installed', '1');
+  document.getElementById('install-banner')?.remove();
+}
+
+/* iOS: 홈 화면 추가 안내 (beforeinstallprompt 미지원) */
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const isStandalone = window.navigator.standalone;
+if (isIOS && !isStandalone && !localStorage.getItem('sc4_ios_hint')) {
+  setTimeout(() => {
+    const b = document.createElement('div');
+    b.style.cssText = `position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+      width:calc(100% - 40px);max-width:440px;
+      background:#1A1A2E;border:1px solid rgba(78,139,240,.25);
+      border-radius:14px;padding:14px 16px;z-index:200;
+      animation:shin .3s cubic-bezier(.34,1.15,.64,1);`;
+    b.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <img src="icon-192.png" style="width:36px;height:36px;border-radius:9px;flex-shrink:0;">
+        <div style="font-size:13px;font-weight:700;color:#EEEEF8;">홈 화면에 추가하는 방법</div>
+        <button onclick="this.closest('div[style]').remove();localStorage.setItem('sc4_ios_hint','1')" style="background:none;border:none;color:#636380;font-size:18px;cursor:pointer;padding:0;margin-left:auto;line-height:1;">✕</button>
+      </div>
+      <div style="font-size:12px;color:#636380;line-height:1.7;">
+        Safari 하단 <strong style="color:#4E8BF0;">공유 버튼 □↑</strong> 탭<br>
+        → <strong style="color:#EEEEF8;">"홈 화면에 추가"</strong> 선택<br>
+        → 앱 아이콘으로 바로 열 수 있어요 🎉
+      </div>`;
+    document.body.appendChild(b);
+  }, 3000);
+}
+</script>
+</body>
+</html>
+
+</body>
+</html>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>SUBCHECK</title>
