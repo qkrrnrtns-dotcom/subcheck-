@@ -1,1 +1,27 @@
 
+{
+  "name": "SUBCHECK — 구독 낭비 탐지기",
+  "short_name": "SUBCHECK",
+  "description": "내가 매달 구독료를 얼마나 낭비하는지 확인하고 해지까지 한 번에",
+  "start_url": "/subcheck-/",
+  "scope": "/subcheck-/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#08080D",
+  "theme_color": "#08080D",
+  "lang": "ko",
+  "categories": ["finance", "utilities"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "절약하기",
+      "short_name": "절약",
+      "description": "낭비 중인 구독 바로 확인",
+      "url": "/subcheck-/",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
