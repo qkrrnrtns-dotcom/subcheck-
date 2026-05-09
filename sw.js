@@ -1,10 +1,10 @@
-const CACHE = 'subcheck-v1';
+  const CACHE = 'subcheck-v2';
 const PRECACHE = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png',
+  '/subcheck-/',
+  '/subcheck-/index.html',
+  '/subcheck-/manifest.json',
+  '/subcheck-/icon-192.png',
+  '/subcheck-/icon-512.png',
 ];
 
 /* ─ 설치: 핵심 파일 미리 캐시 ─ */
