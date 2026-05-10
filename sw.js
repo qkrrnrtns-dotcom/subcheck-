@@ -1,4 +1,4 @@
-  const CACHE = 'subcheck-v7';
+  const CACHE = 'subcheck-v8';
 const PRECACHE = [
   '/subcheck-/',
   '/subcheck-/index.html',
