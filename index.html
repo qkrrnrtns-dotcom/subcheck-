@@ -3,32 +3,33 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>SUBCHECK</title>
+<title>Drip</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#080812">
+<meta name="theme-color" content="#04040F">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="SUBCHECK">
+<meta name="apple-mobile-web-app-title" content="Drip">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="apple-touch-startup-image" href="icon-512.png">
 <link rel="icon" href="icon-192.png">
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 :root{
-  --bg:#080812;
-  --card:#0D0D1C;
-  --card2:#111122;
-  --pill:#161628;
+  --bg:#04040F;
+  --card:#080820;
+  --card2:#0C0C28;
+  --pill:#101030;
   --b:rgba(255,255,255,0.08);
   --bm:rgba(255,255,255,0.15);
   --t:#FFFFFF;
   --t2:#6B6B9A;
   --t3:#2D2D50;
-  --red:#FF2D55;
+  --red:#2D7EFF;
   --green:#34C759;
   --amber:#FF9500;
-  --blue:#0A84FF;
+  --blue:#4DA6FF;
   --r:20px;--rsm:12px;--rxs:8px;
   --nav-h:65px;
   --safe-top:env(safe-area-inset-top,0px);
@@ -40,7 +41,7 @@ body{
   font-family:'Pretendard',-apple-system,BlinkMacSystemFont,sans-serif;
   background:var(--bg);color:var(--t);
   min-height:100vh;max-width:480px;margin:0 auto;
-  padding-bottom:calc(var(--nav-h) + var(--safe-bot) + 16px);
+  padding-bottom:calc(var(--nav-h) + max(var(--safe-bot), 20px) + 20px);
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
   overflow-x:hidden;
@@ -55,13 +56,13 @@ body{
   -webkit-backdrop-filter:saturate(180%) blur(30px);
   border-top:0.5px solid var(--b);
   display:flex;z-index:300;
-  padding-bottom:var(--safe-bot);
-  height:calc(var(--nav-h) + var(--safe-bot));
+  padding-bottom:max(var(--safe-bot), 20px);
+  height:calc(var(--nav-h) + max(var(--safe-bot), 20px));
 }
 .nav-item{
   flex:1;display:flex;flex-direction:column;
   align-items:center;justify-content:center;
-  gap:5px;padding:10px 0 0;cursor:pointer;
+  gap:4px;padding:8px 0 0;cursor:pointer;
   user-select:none;-webkit-user-select:none;
   position:relative;transition:opacity .1s;
 }
@@ -96,7 +97,7 @@ body{
 }
 .logo b{
   color:var(--red);
-  text-shadow:0 0 20px rgba(255,45,85,.4);
+  text-shadow:0 0 20px rgba(45,126,255,.5);
 }
 .hdr-right{display:flex;gap:7px;}
 .hdr-btn,.icon-btn{
@@ -127,9 +128,9 @@ body{
   content:'';
   position:absolute;inset:0;
   background:linear-gradient(135deg,
-    rgba(10,132,255,.04) 0%,
+    rgba(45,126,255,.04) 0%,
     transparent 50%,
-    rgba(255,45,85,.03) 100%);
+    rgba(77,166,255,.03) 100%);
   pointer-events:none;
 }
 .hero-eyebrow,.hero-lbl{
@@ -177,9 +178,9 @@ body{
 }
 .waste-fill,.wf{
   height:100%;border-radius:3px;
-  background:linear-gradient(90deg,var(--red),rgba(255,45,85,.6));
+  background:linear-gradient(90deg,var(--red),rgba(45,126,255,.5));
   transition:width .9s cubic-bezier(.4,0,.2,1);
-  box-shadow:0 0 8px rgba(255,45,85,.5);
+  box-shadow:0 0 8px rgba(45,126,255,.4);
 }
 
 /* ━━ ACTION ROW ━━ */
@@ -229,7 +230,7 @@ body{
   font-family:inherit;font-size:11px;
   font-weight:700;padding:7px 14px;
   cursor:pointer;white-space:nowrap;flex-shrink:0;
-  box-shadow:0 2px 8px rgba(10,132,255,.4);
+  box-shadow:0 2px 8px rgba(45,126,255,.4);
 }
 
 /* ━━ SECTION ━━ */
@@ -298,7 +299,7 @@ input:focus,select:focus{border-color:rgba(10,132,255,.5);}
   border:none;border-radius:var(--rxs);
   font-family:inherit;font-size:13px;font-weight:700;
   padding:12px 16px;cursor:pointer;white-space:nowrap;
-  box-shadow:0 2px 8px rgba(10,132,255,.35);
+  box-shadow:0 2px 8px rgba(45,126,255,.3);
 }
 .add-btn:active,.form-submit:active{opacity:.8;transform:scale(.97);}
 
@@ -437,8 +438,8 @@ input:focus,select:focus{border-color:rgba(10,132,255,.5);}
 
 /* ━━ SAVINGS ━━ */
 .save-hero,.savings-hero{
-  background:linear-gradient(135deg,rgba(255,45,85,.1),rgba(255,45,85,.04));
-  border:0.5px solid rgba(255,45,85,.2);
+  background:linear-gradient(135deg,rgba(45,126,255,.1),rgba(45,126,255,.04));
+  border:0.5px solid rgba(45,126,255,.2);
   border-radius:var(--r);padding:22px;margin-bottom:14px;
   position:relative;overflow:hidden;
 }
@@ -450,7 +451,7 @@ input:focus,select:focus{border-color:rgba(10,132,255,.5);}
 }
 .save-lbl,.savings-eyebrow{
   font-size:11px;font-weight:600;
-  color:rgba(255,90,120,.7);letter-spacing:.06em;
+  color:rgba(77,166,255,.7);letter-spacing:.06em;
   text-transform:uppercase;margin-bottom:6px;
 }
 .save-n,.savings-amount{
@@ -524,8 +525,8 @@ input:focus,select:focus{border-color:rgba(10,132,255,.5);}
 }
 .card-share-btn{
   width:100%;padding:15px;margin-bottom:10px;
-  background:linear-gradient(135deg,rgba(255,45,85,.08),rgba(139,127,240,.06));
-  border:0.5px solid rgba(255,45,85,.2);
+  background:linear-gradient(135deg,rgba(45,126,255,.08),rgba(77,166,255,.06));
+  border:0.5px solid rgba(45,126,255,.2);
   border-radius:var(--rsm);font-family:inherit;
   font-size:13px;font-weight:700;color:var(--t);
   cursor:pointer;display:flex;align-items:center;
@@ -580,7 +581,7 @@ input:focus,select:focus{border-color:rgba(10,132,255,.5);}
   font-size:11px;font-weight:700;
   padding:7px 14px;cursor:pointer;
   white-space:nowrap;flex-shrink:0;
-  box-shadow:0 2px 8px rgba(10,132,255,.4);
+  box-shadow:0 2px 8px rgba(45,126,255,.4);
 }
 .notif-granted{font-size:11px;color:var(--green);display:flex;align-items:center;gap:5px;}
 
@@ -723,11 +724,11 @@ input:focus,select:focus{border-color:rgba(10,132,255,.5);}
 .ob-stat-l,.ob-l{font-size:12px;color:var(--t2);}
 .ob-cta{
   width:100%;padding:18px;
-  background:linear-gradient(135deg,#FF2D55,#FF6B81);
+  background:linear-gradient(135deg,#2D7EFF,#6BA8FF);
   border:none;border-radius:var(--rsm);
   font-family:inherit;font-size:16px;font-weight:800;
   color:#fff;cursor:pointer;margin-top:20px;
-  box-shadow:0 4px 20px rgba(255,45,85,.4);
+  box-shadow:0 4px 20px rgba(45,126,255,.4);
   letter-spacing:-.01em;
 }
 .ob-cta:active{opacity:.88;transform:scale(.98);}
@@ -737,12 +738,97 @@ input:focus,select:focus{border-color:rgba(10,132,255,.5);}
 }
 
 ::-webkit-scrollbar{width:0;height:0;}
+
+/* ━━ GMAIL ━━ */
+.gmail-banner{
+  background:var(--card);border:0.5px solid var(--b);
+  border-radius:var(--r);padding:14px 16px;
+  margin-bottom:12px;cursor:pointer;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:all .15s;
+}
+.gmail-banner:active{background:var(--pill);}
+.gmail-icon{
+  width:36px;height:36px;border-radius:9px;
+  background:#fff;display:flex;align-items:center;
+  justify-content:center;flex-shrink:0;
+}
+.gmail-banner-title{
+  font-size:14px;font-weight:600;color:var(--t);margin-bottom:3px;
+}
+.gmail-banner-sub{font-size:11px;color:var(--t2);line-height:1.4;}
+.gmail-banner-arrow{font-size:18px;color:var(--t3);flex-shrink:0;}
+.gmail-scanning{
+  background:var(--card);border:0.5px solid rgba(77,166,255,.2);
+  border-radius:var(--r);padding:20px;margin-bottom:12px;
+  text-align:center;
+}
+.scanning-spinner{
+  width:28px;height:28px;border:2px solid rgba(77,166,255,.2);
+  border-top-color:var(--blue);border-radius:50%;
+  margin:0 auto 12px;animation:spin 0.8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.scanning-text{
+  font-size:15px;font-weight:600;color:var(--t);margin-bottom:4px;
+}
+.scanning-sub{font-size:12px;color:var(--t2);}
+.scanning-dots{animation:dots 1.5s infinite;}
+@keyframes dots{
+  0%,20%{content:'.';}
+  40%{content:'..';}
+  60%,100%{content:'...';}
+}
+.gmail-result-sheet{
+  background:var(--card);border:0.5px solid rgba(77,166,255,.2);
+  border-radius:var(--r);padding:16px;margin-bottom:12px;
+}
+.gmail-result-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:14px;
+}
+.gmail-result-title{font-size:14px;font-weight:700;color:var(--t);}
+.gmail-result-count{
+  font-size:11px;font-weight:600;color:var(--blue);
+  background:rgba(77,166,255,.1);padding:3px 10px;border-radius:20px;
+}
+.gmail-found-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 0;border-bottom:0.5px solid var(--b);
+}
+.gmail-found-item:last-of-type{border-bottom:none;}
+.gmail-found-logo{
+  width:34px;height:34px;border-radius:9px;
+  background:var(--pill);overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:800;color:var(--t2);flex-shrink:0;
+}
+.gmail-found-logo img{width:100%;height:100%;object-fit:contain;padding:3px;}
+.gmail-found-name{font-size:13px;font-weight:600;color:var(--t);flex:1;}
+.gmail-found-price{font-size:13px;font-weight:700;color:var(--t);font-variant-numeric:tabular-nums;}
+.gmail-found-date{font-size:10px;color:var(--t2);margin-top:2px;}
+.gmail-add-all{
+  width:100%;padding:14px;margin-top:12px;
+  background:var(--blue);color:#fff;border:none;
+  border-radius:var(--rsm);font-family:inherit;
+  font-size:14px;font-weight:700;cursor:pointer;
+  box-shadow:0 3px 12px rgba(45,126,255,.4);
+}
+.gmail-add-all:active{opacity:.85;}
+.gmail-connected{
+  background:rgba(52,199,89,.07);
+  border:0.5px solid rgba(52,199,89,.2);
+  border-radius:var(--rsm);padding:10px 14px;
+  margin-bottom:12px;display:flex;align-items:center;gap:8px;
+  font-size:12px;color:var(--green);font-weight:500;
+}
+
 </style>
 </head>
 <body>
 
 <div class="hdr">
-  <div class="logo">SUB<b>CHECK</b></div>
+  <div class="logo"><span style="font-weight:900;letter-spacing:-.03em;color:var(--t);">dr</span><b>ip</b></div>
   <div class="hdr-right">
     <button class="hdr-btn" onclick="openBillingEdit()">결제일</button>
     <button class="hdr-btn" onclick="shareAll()">공유</button>
@@ -765,6 +851,27 @@ input:focus,select:focus{border-color:rgba(10,132,255,.5);}
       </div>
     </div>
     <div class="waste-rail"><div class="waste-fill" id="h-bar" style="width:0%"></div></div>
+  </div>
+
+
+  <!-- Gmail 연동 배너 -->
+  <div id="gmail-banner" class="gmail-banner" onclick="connectGmail()">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="gmail-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      </div>
+      <div>
+        <div class="gmail-banner-title">Gmail 연동으로 구독 자동 발견</div>
+        <div class="gmail-banner-sub">영수증 이메일을 스캔해서 구독 목록을 자동으로 채워요</div>
+      </div>
+    </div>
+    <div class="gmail-banner-arrow">→</div>
+  </div>
+
+  <div id="gmail-scanning" style="display:none;" class="gmail-scanning">
+    <div class="scanning-spinner"></div>
+    <div class="scanning-text">Gmail 스캔 중<span class="scanning-dots">...</span></div>
+    <div class="scanning-sub" id="scanning-status">이메일에서 구독을 찾고 있어요</div>
   </div>
 
   <div class="action-row">
@@ -1397,7 +1504,7 @@ function checkOnboarding(){
   const root=document.getElementById('ob-root');
   const ov=document.createElement('div'); ov.className='ob-ov';
   ov.innerHTML=`<div class="ob-sheet">
-    <div class="ob-logo">SUB<b>CHECK</b></div>
+    <div class="ob-logo">drip</div>
     <div style="font-size:19px;font-weight:700;color:var(--t);letter-spacing:-.02em;margin-bottom:6px;">구독, 얼마나 낭비하고 있나요?</div>
     <div style="font-size:13px;color:var(--t2);line-height:1.65;margin-bottom:20px;">카드 결제 문자 몇 개만 붙여넣으면<br>내가 매달 얼마를 낭비하는지 바로 알 수 있어요.</div>
     <div class="ob-stat">
@@ -1619,6 +1726,242 @@ function renderSavings(){
   // 누적 히스토리
   renderCancelledHistory(el);
 }
+
+
+/* ━━━ GMAIL 연동 ━━━ */
+const GMAIL_CLIENT_ID = '703004117245-v1n6lcg3bkonlm5an8l7er91bve5tpni.apps.googleusercontent.com';
+const GMAIL_SCOPE = 'https://www.googleapis.com/auth/gmail.readonly';
+
+let gmailToken = null;
+let tokenClient = null;
+
+// 구독 서비스 이메일 도메인 매핑
+const EMAIL_SERVICE_MAP = [
+  {keys:['netflix.com','Netflix'],           ...PRESETS[0]},
+  {keys:['youtube.com','google.com','YouTube'],  ...PRESETS[1]},
+  {keys:['openai.com','ChatGPT'],             ...PRESETS[2]},
+  {keys:['coupang.com','Coupang'],            ...PRESETS[3]},
+  {keys:['melon.com','멜론'],                 ...PRESETS[4]},
+  {keys:['naver.com','네이버'],               ...PRESETS[5]},
+  {keys:['tving.co.kr','TVING'],              ...PRESETS[6]},
+  {keys:['wavve.com','Wavve'],               ...PRESETS[7]},
+  {keys:['watcha.com','Watcha'],              ...PRESETS[8]},
+  {keys:['spotify.com','Spotify'],            ...PRESETS[9]},
+  {keys:['adobe.com','Adobe'],                ...PRESETS[10]},
+  {keys:['microsoft.com','Microsoft'],        ...PRESETS[11]},
+  {keys:['millie.co.kr','밀리'],              ...PRESETS[12]},
+  {keys:['class101.net','클래스101'],         ...PRESETS[13]},
+  {keys:['apple.com','Apple'],                ...PRESETS[14]},
+  {keys:['ridibooks.com','리디'],             ...PRESETS[15]},
+];
+
+function initGmailClient() {
+  if (!window.google) return;
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: GMAIL_CLIENT_ID,
+    scope: GMAIL_SCOPE,
+    callback: async (resp) => {
+      if (resp.error) { console.error(resp); return; }
+      gmailToken = resp.access_token;
+      await scanGmail();
+    },
+  });
+}
+
+function connectGmail() {
+  if (!window.google) {
+    alert('Google 라이브러리 로딩 중이에요. 잠시 후 다시 시도해주세요.');
+    return;
+  }
+  if (!tokenClient) initGmailClient();
+  tokenClient.requestAccessToken();
+}
+
+async function scanGmail() {
+  // 배너 숨기고 스캔 표시
+  document.getElementById('gmail-banner').style.display = 'none';
+  const scanEl = document.getElementById('gmail-scanning');
+  scanEl.style.display = 'block';
+
+  const statusEl = document.getElementById('scanning-status');
+  statusEl.textContent = '결제 영수증 이메일을 찾고 있어요...';
+
+  try {
+    // 최근 6개월 결제 관련 이메일 검색
+    const query = encodeURIComponent('subject:(결제 OR 영수증 OR invoice OR receipt OR payment OR 청구 OR 구독 OR 갱신) newer_than:180d');
+    const listResp = await fetch(
+      `https://gmail.googleapis.com/gmail/v1/users/me/messages?q=${query}&maxResults=50`,
+      {headers: {Authorization: `Bearer ${gmailToken}`}}
+    );
+    const listData = await listResp.json();
+    const messages = listData.messages || [];
+
+    statusEl.textContent = `${messages.length}개 이메일 분석 중...`;
+
+    const found = {};
+    let processed = 0;
+
+    for (const msg of messages.slice(0, 30)) {
+      const msgResp = await fetch(
+        `https://gmail.googleapis.com/gmail/v1/users/me/messages/${msg.id}?format=metadata&metadataHeaders=From&metadataHeaders=Subject&metadataHeaders=Date`,
+        {headers: {Authorization: `Bearer ${gmailToken}`}}
+      );
+      const msgData = await msgResp.json();
+      const headers = msgData.payload?.headers || [];
+      const from = headers.find(h => h.name === 'From')?.value || '';
+      const subject = headers.find(h => h.name === 'Subject')?.value || '';
+      const date = headers.find(h => h.name === 'Date')?.value || '';
+
+      // 서비스 매핑
+      for (const svc of EMAIL_SERVICE_MAP) {
+        if (svc.keys.some(k => from.toLowerCase().includes(k.toLowerCase()) || 
+                               subject.toLowerCase().includes(k.toLowerCase()))) {
+          if (!found[svc.name]) {
+            // 금액 추출 시도
+            const amtMatch = subject.match(/([\d,]+)원/) || 
+                             subject.match(/\$([\d.]+)/) ||
+                             subject.match(/₩([\d,]+)/);
+            const detectedPrice = amtMatch ? 
+              parseInt(amtMatch[1].replace(/,/g,'')) : svc.price;
+            
+            found[svc.name] = {
+              ...svc,
+              detectedPrice: detectedPrice > 500 && detectedPrice < 200000 ? detectedPrice : svc.price,
+              lastEmail: new Date(date).toLocaleDateString('ko-KR', {month:'short', day:'numeric'}),
+            };
+          }
+          break;
+        }
+      }
+
+      processed++;
+      statusEl.textContent = `${processed}/${Math.min(30, messages.length)}개 분석 중...`;
+    }
+
+    scanEl.style.display = 'none';
+    showGmailResults(Object.values(found));
+
+  } catch(e) {
+    console.error('Gmail scan error:', e);
+    scanEl.style.display = 'none';
+    document.getElementById('gmail-banner').style.display = 'flex';
+    alert('Gmail 스캔 중 오류가 났어요. 다시 시도해주세요.');
+  }
+}
+
+let gmailFoundSubs = [];
+let gmailChecked = new Set();
+
+function showGmailResults(found) {
+  gmailFoundSubs = found;
+  gmailChecked = new Set(found.map((_,i) => i));
+
+  if (!found.length) {
+    // 연동은 됐는데 구독 못찾음
+    const banner = document.getElementById('gmail-banner');
+    banner.style.display = 'none';
+    const p0 = document.getElementById('p0');
+    const connectedEl = document.createElement('div');
+    connectedEl.className = 'gmail-connected';
+    connectedEl.innerHTML = '✓ Gmail 연동 완료 — 결제 이메일에서 구독을 찾지 못했어요';
+    p0.insertBefore(connectedEl, document.getElementById('gmail-scanning').nextSibling);
+    return;
+  }
+
+  // 결과 시트 생성
+  const existing = document.getElementById('gmail-results');
+  if (existing) existing.remove();
+
+  const sheet = document.createElement('div');
+  sheet.id = 'gmail-results';
+  sheet.className = 'gmail-result-sheet';
+
+  const hdr = document.createElement('div');
+  hdr.className = 'gmail-result-header';
+  hdr.innerHTML = `
+    <div class="gmail-result-title">📧 Gmail에서 발견한 구독</div>
+    <div class="gmail-result-count">${found.length}개</div>
+  `;
+  sheet.appendChild(hdr);
+
+  found.forEach((s, i) => {
+    const row = document.createElement('div');
+    row.className = 'gmail-found-item';
+
+    const chk = document.createElement('div');
+    chk.className = 'sms-chk on';
+    chk.id = `gc-${i}`;
+    chk.textContent = '✓';
+    chk.onclick = () => {
+      if (gmailChecked.has(i)) gmailChecked.delete(i);
+      else gmailChecked.add(i);
+      chk.className = 'sms-chk' + (gmailChecked.has(i) ? ' on' : '');
+    };
+
+    const lw = document.createElement('div');
+    lw.className = 'gmail-found-logo';
+    lw.appendChild(mkImg(s, 34, 3, 9));
+
+    const info = document.createElement('div');
+    info.style.flex = '1';
+    info.innerHTML = `
+      <div class="gmail-found-name">${s.name}</div>
+      <div class="gmail-found-date">최근 이메일: ${s.lastEmail}</div>
+    `;
+
+    const price = document.createElement('div');
+    price.style.textAlign = 'right';
+    price.innerHTML = `<div class="gmail-found-price">₩${fmt(s.detectedPrice)}</div><div class="gmail-found-date">월</div>`;
+
+    row.append(chk, lw, info, price);
+    sheet.appendChild(row);
+  });
+
+  const addBtn = document.createElement('button');
+  addBtn.className = 'gmail-add-all';
+  addBtn.textContent = `선택한 구독 추가하기 (${found.length}개) →`;
+  addBtn.onclick = addGmailSubs;
+  sheet.appendChild(addBtn);
+
+  const scanEl = document.getElementById('gmail-scanning');
+  scanEl.parentNode.insertBefore(sheet, scanEl.nextSibling);
+}
+
+function addGmailSubs() {
+  const toAdd = gmailFoundSubs.filter((_, i) => gmailChecked.has(i));
+  toAdd.forEach(s => {
+    if (subs.find(x => x.name === s.name)) return;
+    subs.push({
+      id: nextId++, name: s.name,
+      price: s.detectedPrice || s.price,
+      cycle: 'monthly', usage: 'undiagnosed',
+      billingDay: null, domain: s.domain,
+      ini: s.ini, clr: s.clr,
+    });
+    added.add(s.name);
+  });
+  save();
+
+  document.getElementById('gmail-results')?.remove();
+  
+  // 연동 완료 표시
+  const connectedEl = document.createElement('div');
+  connectedEl.className = 'gmail-connected';
+  connectedEl.innerHTML = `✓ Gmail 연동 완료 — ${toAdd.length}개 구독 추가됨`;
+  document.getElementById('gmail-scanning').after(connectedEl);
+
+  renderAll();
+
+  // 바로 진단 유도
+  if (toAdd.length > 0) {
+    setTimeout(() => openDiag(), 600);
+  }
+}
+
+// 페이지 로드 후 Google 라이브러리 초기화
+window.addEventListener('load', () => {
+  setTimeout(initGmailClient, 1000);
+});
 
 /* ─── Init ─── */
 try { renderAll(); } catch(e){ console.error('renderAll',e); }
