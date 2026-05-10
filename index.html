@@ -411,6 +411,44 @@
     .secondary-btn { width:100%; margin-top:10px; padding:16px; border-radius:18px; background:rgba(255,255,255,.06); color:#c6ccee; border:1px solid var(--line); font-weight:750; }
 
     .empty { padding: 36px 18px; text-align:center; color:var(--muted); line-height:1.6; }
+
+    .detail-sheet {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display:none;
+      align-items:flex-end;
+      z-index: 210;
+    }
+    .detail-sheet.show { display:flex; }
+    .detail-hero {
+      padding: 18px;
+      border-radius: 24px;
+      background: radial-gradient(circle at 90% 0%, rgba(76,125,255,.2), transparent 40%), linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.035));
+      border: 1px solid var(--line);
+      margin-bottom: 12px;
+    }
+    .detail-head { display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+    .detail-name { font-size:22px; font-weight:900; letter-spacing:-.045em; }
+    .detail-plan { color:var(--muted); font-size:13px; margin-top:4px; }
+    .detail-price { font-size:38px; font-weight:950; letter-spacing:-.06em; margin-top:10px; }
+    .detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin: 12px 0; }
+    .detail-mini { padding:14px; border-radius:18px; background:rgba(255,255,255,.055); border:1px solid var(--line); }
+    .detail-mini span { display:block; color:var(--muted); font-size:11px; margin-bottom:7px; }
+    .detail-mini strong { font-size:15px; letter-spacing:-.03em; }
+    .detail-section { margin-top: 18px; }
+    .detail-section-title { font-size:15px; font-weight:850; margin-bottom:10px; letter-spacing:-.03em; }
+    .status-grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:8px; }
+    .status-btn { padding:12px 10px; border-radius:16px; background:rgba(255,255,255,.055); color:var(--muted); border:1px solid var(--line); font-weight:800; font-size:12px; }
+    .status-btn.active { color:#fff; background:rgba(76,125,255,.18); border-color:rgba(76,125,255,.45); }
+    .cancel-link-card { padding:15px; border-radius:20px; background:rgba(255,77,109,.08); border:1px solid rgba(255,77,109,.22); color:#ffd2dc; font-size:13px; line-height:1.55; }
+    .danger-btn { width:100%; margin-top:10px; padding:16px; border-radius:18px; background:rgba(255,77,109,.1); color:#ff6f88; border:1px solid rgba(255,77,109,.28); font-weight:850; }
+    .recommend-row { display:flex; gap:10px; overflow-x:auto; padding-bottom:4px; scrollbar-width:none; }
+    .recommend-row::-webkit-scrollbar { display:none; }
+    .recommend-card { flex:0 0 132px; padding:13px; border-radius:18px; background:rgba(255,255,255,.055); border:1px solid var(--line); }
+    .recommend-card strong { display:block; font-size:13px; margin-top:8px; }
+    .recommend-card span { display:block; color:var(--muted); font-size:11px; margin-top:4px; line-height:1.35; }
   </style>
 </head>
 
@@ -565,7 +603,57 @@
     </div>
   </div>
 
+  <div class="detail-sheet" id="detailSheet" onclick="closeDetailSheet(event)">
+    <div class="sheet-panel" onclick="event.stopPropagation()" id="detailPanel"></div>
+  </div>
+
   <script>
+    const cancelLinks = {
+      'Netflix': 'https://www.netflix.com/cancelplan',
+      'ChatGPT Plus': 'https://chatgpt.com/#settings/Subscription',
+      'YouTube Premium': 'https://myaccount.google.com/payments-and-subscriptions',
+      'Notion': 'https://www.notion.so/settings/billing',
+      '멜론': 'https://www.melon.com/mymusic/pay/mymusicPayInfoList.htm',
+      'Adobe Creative Cloud': 'https://account.adobe.com/plans',
+      'Disney+': 'https://www.disneyplus.com/account/subscription',
+      'Claude Pro': 'https://claude.ai/settings/billing',
+      'Spotify': 'https://www.spotify.com/account/subscription/cancel',
+      '쿠팡 로켓와우': 'https://www.coupang.com/np/member/wowclub'
+    };
+
+    const alternatives = {
+      'AI 도구': [
+        { name:'Claude Pro', desc:'문서/글쓰기 강점' },
+        { name:'Perplexity Pro', desc:'검색 기반 답변' },
+        { name:'Gemini Advanced', desc:'구글 연동 강점' }
+      ],
+      '엔터테인먼트': [
+        { name:'TVING', desc:'국내 콘텐츠 강점' },
+        { name:'Disney+', desc:'디즈니/마블/픽사' },
+        { name:'Prime Video', desc:'가격 경쟁력' }
+      ],
+      '생산성': [
+        { name:'Notion AI', desc:'문서 기반 생산성' },
+        { name:'Todoist', desc:'할 일 관리' },
+        { name:'Google One', desc:'저장공간 번들' }
+      ],
+      '디자인': [
+        { name:'Canva Pro', desc:'간단한 디자인 제작' },
+        { name:'Figma', desc:'협업 디자인' },
+        { name:'CapCut Pro', desc:'영상 편집' }
+      ],
+      '음악': [
+        { name:'Spotify', desc:'추천 알고리즘' },
+        { name:'YouTube Music', desc:'영상/음악 번들' },
+        { name:'Apple Music', desc:'애플 생태계' }
+      ],
+      '쇼핑/멤버십': [
+        { name:'쿠팡 로켓와우', desc:'배송/OTT 번들' },
+        { name:'네이버플러스', desc:'포인트 적립' },
+        { name:'컬리멤버스', desc:'장보기 혜택' }
+      ]
+    };
+
     const defaultSubs = [
       { name:'Netflix', plan:'프리미엄', price:13500, date:12, category:'엔터테인먼트', status:'사용 중', logo:'N', cls:'logo-netflix' },
       { name:'ChatGPT Plus', plan:'Plus 요금제', price:20000, date:14, category:'AI 도구', status:'중복 가능', logo:'◎', cls:'logo-gpt' },
@@ -596,8 +684,9 @@
     }
 
     function subCard(s) {
+      const safeName = s.name.replace(/'/g, "\'");
       return `
-        <div class="subscription-card">
+        <div class="subscription-card" onclick="openDetail('${safeName}')">
           ${logoHTML(s)}
           <div class="sub-main">
             <div class="sub-name">${s.name}</div>
@@ -645,13 +734,119 @@
       const category = document.getElementById('newCategory').value;
       if (!name || !price) return alert('서비스 이름과 금액을 입력해주세요.');
       subs.unshift({ name, plan: category, price, date, category, status:'점검 필요', logo:name.slice(0,1), cls:'' });
-      localStorage.setItem('drip_subs', JSON.stringify(subs));
+      persist();
       document.getElementById('newName').value = '';
       document.getElementById('newPrice').value = '';
       document.getElementById('newDate').value = '';
       hideAddSheet();
       render();
       goTab('subs');
+    }
+
+    function persist() {
+      localStorage.setItem('drip_subs', JSON.stringify(subs));
+    }
+
+    function openDetail(name) {
+      const s = subs.find(item => item.name === name);
+      if (!s) return;
+      const link = cancelLinks[s.name] || `https://www.google.com/search?q=${encodeURIComponent(s.name + ' 구독 해지')}`;
+      const recs = alternatives[s.category] || alternatives['생산성'];
+      const annual = Number(s.price || 0) * 12;
+      const sameCategory = subs.filter(x => x.category === s.category).length;
+      const safeName = s.name.replace(/'/g, "\'");
+
+      document.getElementById('detailPanel').innerHTML = `
+        <div class="sheet-header">
+          <h2>구독 상세</h2>
+          <button class="circle-btn" onclick="hideDetailSheet()">✕</button>
+        </div>
+
+        <div class="detail-hero">
+          <div class="detail-head">
+            ${logoHTML(s)}
+            <div>
+              <div class="detail-name">${s.name}</div>
+              <div class="detail-plan">${s.plan || s.category}</div>
+            </div>
+          </div>
+          <div class="section-kicker">월 결제금액</div>
+          <div class="detail-price">${fmt(s.price)}</div>
+          <div class="hero-sub">연간 기준 약 <b>${fmt(annual)}</b> 지출</div>
+        </div>
+
+        <div class="detail-grid">
+          <div class="detail-mini"><span>다음 결제일</span><strong>${nextMonthText(s.date || 15)}</strong></div>
+          <div class="detail-mini"><span>카테고리</span><strong>${s.category}</strong></div>
+          <div class="detail-mini"><span>현재 상태</span><strong>${s.status}</strong></div>
+          <div class="detail-mini"><span>같은 카테고리</span><strong>${sameCategory}개 구독</strong></div>
+        </div>
+
+        <div class="detail-section">
+          <div class="detail-section-title">상태 변경</div>
+          <div class="status-grid">
+            ${['사용 중','점검 필요','중복 가능','가격 인상','해지 예정'].map(st => `
+              <button class="status-btn ${s.status === st ? 'active' : ''}" onclick="updateStatus('${safeName}', '${st}')">${st}</button>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <div class="detail-section-title">카테고리 변경</div>
+          <select onchange="updateCategory('${safeName}', this.value)">
+            ${['AI 도구','엔터테인먼트','생산성','디자인','음악','쇼핑/멤버십'].map(cat => `<option ${s.category === cat ? 'selected' : ''}>${cat}</option>`).join('')}
+          </select>
+        </div>
+
+        <div class="detail-section">
+          <div class="detail-section-title">해지 도우미</div>
+          <div class="cancel-link-card">
+            해지를 결정했다면 아래 버튼으로 공식 해지/결제 관리 페이지로 이동하세요. 서비스마다 경로가 바뀔 수 있어 최종 확인은 해당 서비스 화면에서 진행해야 해요.
+          </div>
+          <button class="primary-btn" onclick="window.open('${link}', '_blank')">해지 페이지로 이동</button>
+          <button class="secondary-btn" onclick="updateStatus('${safeName}', '해지 예정')">해지 예정으로 표시</button>
+        </div>
+
+        <div class="detail-section">
+          <div class="detail-section-title">비슷한 구독/대체 서비스</div>
+          <div class="recommend-row">
+            ${recs.map(r => `<div class="recommend-card"><div class="logo-box" style="width:40px;height:40px">${r.name.slice(0,1)}</div><strong>${r.name}</strong><span>${r.desc}</span></div>`).join('')}
+          </div>
+        </div>
+
+        <button class="danger-btn" onclick="deleteSub('${safeName}')">이 구독 삭제</button>
+      `;
+      document.getElementById('detailSheet').classList.add('show');
+    }
+
+    function hideDetailSheet() { document.getElementById('detailSheet').classList.remove('show'); }
+    function closeDetailSheet(e) { if (e.target.id === 'detailSheet') hideDetailSheet(); }
+
+    function updateStatus(name, status) {
+      const s = subs.find(item => item.name === name);
+      if (!s) return;
+      s.status = status;
+      persist();
+      render();
+      openDetail(name);
+    }
+
+    function updateCategory(name, category) {
+      const s = subs.find(item => item.name === name);
+      if (!s) return;
+      s.category = category;
+      s.plan = category;
+      persist();
+      render();
+      openDetail(name);
+    }
+
+    function deleteSub(name) {
+      if (!confirm(`${name} 구독을 삭제할까요?`)) return;
+      subs = subs.filter(item => item.name !== name);
+      persist();
+      render();
+      hideDetailSheet();
     }
 
     if ('serviceWorker' in navigator) {
