@@ -392,6 +392,9 @@
       background: linear-gradient(180deg, #111631, #080b1d);
       border:1px solid var(--line2);
       animation: sheetUp .24s ease;
+      max-height: 88vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
     @keyframes sheetUp { from { transform: translateY(100%); } to { transform: none; } }
     .sheet-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
@@ -590,8 +593,8 @@
       <div class="sheet-header"><h2>구독 추가</h2><button class="circle-btn" onclick="hideAddSheet()">✕</button></div>
       <div class="section-head" style="margin-top:0"><h2 class="section-title">자동으로 찾아드려요</h2></div>
       <div class="card-list" style="margin-bottom:18px">
-        <div class="subscription-card"><div class="logo-box">📧</div><div class="sub-main"><div class="sub-name">Gmail 연동</div><div class="sub-meta">영수증 이메일을 스캔해서 구독을 찾아요</div></div><button class="badge blue">연동하기</button></div>
-        <div class="subscription-card"><div class="logo-box">💬</div><div class="sub-main"><div class="sub-name">문자 메시지 분석</div><div class="sub-meta">결제 문자를 분석해서 구독을 찾아요</div></div><button class="badge blue">분석하기</button></div>
+        <div class="subscription-card" onclick="demoGmailScan()"><div class="logo-box">📧</div><div class="sub-main"><div class="sub-name">Gmail 연동</div><div class="sub-meta">영수증 이메일을 스캔해서 구독을 찾아요</div></div><button class="badge blue">연동하기</button></div>
+        <div class="subscription-card" onclick="demoSmsScan()"><div class="logo-box">💬</div><div class="sub-main"><div class="sub-name">문자 메시지 분석</div><div class="sub-meta">결제 문자를 분석해서 구독을 찾아요</div></div><button class="badge blue">분석하기</button></div>
       </div>
       <div class="section-head"><h2 class="section-title">직접 추가하기</h2></div>
       <div class="input-grid">
@@ -847,6 +850,45 @@
       persist();
       render();
       hideDetailSheet();
+    }
+
+    function demoGmailScan() {
+      const demoItems = [
+        { name:'Claude Pro', plan:'Pro 요금제', price:22000, date:18, category:'AI 도구', status:'점검 필요', logo:'C', cls:'' },
+        { name:'Spotify', plan:'개인 요금제', price:10900, date:23, category:'음악', status:'사용 중', logo:'S', cls:'' },
+        { name:'쿠팡 로켓와우', plan:'멤버십', price:7890, date:28, category:'쇼핑/멤버십', status:'사용 중', logo:'C', cls:'' }
+      ];
+      let addedCount = 0;
+      demoItems.forEach(item => {
+        if (!subs.some(s => s.name === item.name)) {
+          subs.unshift(item);
+          addedCount++;
+        }
+      });
+      persist();
+      render();
+      hideAddSheet();
+      goTab('subs');
+      alert(addedCount ? `Gmail 데모 스캔으로 ${addedCount}개 구독을 찾았어요.` : '이미 추가된 구독이에요.');
+    }
+
+    function demoSmsScan() {
+      const demoItems = [
+        { name:'TVING', plan:'스탠다드', price:13900, date:19, category:'엔터테인먼트', status:'점검 필요', logo:'T', cls:'' },
+        { name:'Canva Pro', plan:'Pro 요금제', price:14900, date:24, category:'디자인', status:'중복 가능', logo:'C', cls:'' }
+      ];
+      let addedCount = 0;
+      demoItems.forEach(item => {
+        if (!subs.some(s => s.name === item.name)) {
+          subs.unshift(item);
+          addedCount++;
+        }
+      });
+      persist();
+      render();
+      hideAddSheet();
+      goTab('subs');
+      alert(addedCount ? `문자 분석 데모로 ${addedCount}개 구독을 찾았어요.` : '이미 추가된 구독이에요.');
     }
 
     if ('serviceWorker' in navigator) {
