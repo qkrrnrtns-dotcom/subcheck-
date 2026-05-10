@@ -3,32 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>SUBCHECK</title>
+<title>Drip</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#080812">
+<meta name="theme-color" content="#04040F">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="SUBCHECK">
+<meta name="apple-mobile-web-app-title" content="Drip">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="apple-touch-startup-image" href="icon-512.png">
 <link rel="icon" href="icon-192.png">
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
 <style>
 :root{
-  --bg:#080812;
-  --card:#0D0D1C;
-  --card2:#111122;
-  --pill:#161628;
+  --bg:#04040F;
+  --card:#080820;
+  --card2:#0C0C28;
+  --pill:#101030;
   --b:rgba(255,255,255,0.08);
   --bm:rgba(255,255,255,0.15);
   --t:#FFFFFF;
   --t2:#6B6B9A;
   --t3:#2D2D50;
-  --red:#FF2D55;
+  --red:#2D7EFF;
   --green:#34C759;
   --amber:#FF9500;
-  --blue:#0A84FF;
+  --blue:#4DA6FF;
   --r:20px;--rsm:12px;--rxs:8px;
   --nav-h:65px;
   --safe-top:env(safe-area-inset-top,0px);
@@ -96,7 +96,7 @@ body{
 }
 .logo b{
   color:var(--red);
-  text-shadow:0 0 20px rgba(255,45,85,.4);
+  text-shadow:0 0 20px rgba(45,126,255,.5);
 }
 .hdr-right{display:flex;gap:7px;}
 .hdr-btn,.icon-btn{
@@ -127,9 +127,9 @@ body{
   content:'';
   position:absolute;inset:0;
   background:linear-gradient(135deg,
-    rgba(10,132,255,.04) 0%,
+    rgba(45,126,255,.04) 0%,
     transparent 50%,
-    rgba(255,45,85,.03) 100%);
+    rgba(77,166,255,.03) 100%);
   pointer-events:none;
 }
 .hero-eyebrow,.hero-lbl{
@@ -177,9 +177,9 @@ body{
 }
 .waste-fill,.wf{
   height:100%;border-radius:3px;
-  background:linear-gradient(90deg,var(--red),rgba(255,45,85,.6));
+  background:linear-gradient(90deg,var(--red),rgba(45,126,255,.5));
   transition:width .9s cubic-bezier(.4,0,.2,1);
-  box-shadow:0 0 8px rgba(255,45,85,.5);
+  box-shadow:0 0 8px rgba(45,126,255,.4);
 }
 
 /* ━━ ACTION ROW ━━ */
@@ -229,7 +229,7 @@ body{
   font-family:inherit;font-size:11px;
   font-weight:700;padding:7px 14px;
   cursor:pointer;white-space:nowrap;flex-shrink:0;
-  box-shadow:0 2px 8px rgba(10,132,255,.4);
+  box-shadow:0 2px 8px rgba(45,126,255,.4);
 }
 
 /* ━━ SECTION ━━ */
@@ -298,7 +298,7 @@ input:focus,select:focus{border-color:rgba(10,132,255,.5);}
   border:none;border-radius:var(--rxs);
   font-family:inherit;font-size:13px;font-weight:700;
   padding:12px 16px;cursor:pointer;white-space:nowrap;
-  box-shadow:0 2px 8px rgba(10,132,255,.35);
+  box-shadow:0 2px 8px rgba(45,126,255,.3);
 }
 .add-btn:active,.form-submit:active{opacity:.8;transform:scale(.97);}
 
@@ -437,8 +437,8 @@ input:focus,select:focus{border-color:rgba(10,132,255,.5);}
 
 /* ━━ SAVINGS ━━ */
 .save-hero,.savings-hero{
-  background:linear-gradient(135deg,rgba(255,45,85,.1),rgba(255,45,85,.04));
-  border:0.5px solid rgba(255,45,85,.2);
+  background:linear-gradient(135deg,rgba(45,126,255,.1),rgba(45,126,255,.04));
+  border:0.5px solid rgba(45,126,255,.2);
   border-radius:var(--r);padding:22px;margin-bottom:14px;
   position:relative;overflow:hidden;
 }
@@ -450,7 +450,7 @@ input:focus,select:focus{border-color:rgba(10,132,255,.5);}
 }
 .save-lbl,.savings-eyebrow{
   font-size:11px;font-weight:600;
-  color:rgba(255,90,120,.7);letter-spacing:.06em;
+  color:rgba(77,166,255,.7);letter-spacing:.06em;
   text-transform:uppercase;margin-bottom:6px;
 }
 .save-n,.savings-amount{
@@ -524,8 +524,8 @@ input:focus,select:focus{border-color:rgba(10,132,255,.5);}
 }
 .card-share-btn{
   width:100%;padding:15px;margin-bottom:10px;
-  background:linear-gradient(135deg,rgba(255,45,85,.08),rgba(139,127,240,.06));
-  border:0.5px solid rgba(255,45,85,.2);
+  background:linear-gradient(135deg,rgba(45,126,255,.08),rgba(77,166,255,.06));
+  border:0.5px solid rgba(45,126,255,.2);
   border-radius:var(--rsm);font-family:inherit;
   font-size:13px;font-weight:700;color:var(--t);
   cursor:pointer;display:flex;align-items:center;
@@ -580,7 +580,7 @@ input:focus,select:focus{border-color:rgba(10,132,255,.5);}
   font-size:11px;font-weight:700;
   padding:7px 14px;cursor:pointer;
   white-space:nowrap;flex-shrink:0;
-  box-shadow:0 2px 8px rgba(10,132,255,.4);
+  box-shadow:0 2px 8px rgba(45,126,255,.4);
 }
 .notif-granted{font-size:11px;color:var(--green);display:flex;align-items:center;gap:5px;}
 
@@ -723,11 +723,11 @@ input:focus,select:focus{border-color:rgba(10,132,255,.5);}
 .ob-stat-l,.ob-l{font-size:12px;color:var(--t2);}
 .ob-cta{
   width:100%;padding:18px;
-  background:linear-gradient(135deg,#FF2D55,#FF6B81);
+  background:linear-gradient(135deg,#2D7EFF,#6BA8FF);
   border:none;border-radius:var(--rsm);
   font-family:inherit;font-size:16px;font-weight:800;
   color:#fff;cursor:pointer;margin-top:20px;
-  box-shadow:0 4px 20px rgba(255,45,85,.4);
+  box-shadow:0 4px 20px rgba(45,126,255,.4);
   letter-spacing:-.01em;
 }
 .ob-cta:active{opacity:.88;transform:scale(.98);}
@@ -742,7 +742,7 @@ input:focus,select:focus{border-color:rgba(10,132,255,.5);}
 <body>
 
 <div class="hdr">
-  <div class="logo">SUB<b>CHECK</b></div>
+  <div class="logo"><span style="font-weight:900;letter-spacing:-.03em;color:var(--t);">dr</span><b>ip</b></div>
   <div class="hdr-right">
     <button class="hdr-btn" onclick="openBillingEdit()">결제일</button>
     <button class="hdr-btn" onclick="shareAll()">공유</button>
@@ -1397,7 +1397,7 @@ function checkOnboarding(){
   const root=document.getElementById('ob-root');
   const ov=document.createElement('div'); ov.className='ob-ov';
   ov.innerHTML=`<div class="ob-sheet">
-    <div class="ob-logo">SUB<b>CHECK</b></div>
+    <div class="ob-logo">drip</div>
     <div style="font-size:19px;font-weight:700;color:var(--t);letter-spacing:-.02em;margin-bottom:6px;">구독, 얼마나 낭비하고 있나요?</div>
     <div style="font-size:13px;color:var(--t2);line-height:1.65;margin-bottom:20px;">카드 결제 문자 몇 개만 붙여넣으면<br>내가 매달 얼마를 낭비하는지 바로 알 수 있어요.</div>
     <div class="ob-stat">
